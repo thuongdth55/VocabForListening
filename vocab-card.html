@@ -165,18 +165,6 @@
 <div id="loading">Đang tải dữ liệu...</div>
 <div id="book">
     </div>
-
-<div class="nav-control">
-    <button class="nav-btn" onpointerdown="prevPage()">←</button>
-    <div id="pageDots" class="dots"></div>
-    <button class="nav-btn" onpointerdown="nextPage()">→</button>
-</div>
-
-<select id="type-select">
-    <option value="0">Type 0</option>
-    <option value="1">Type 1</option>
-    <option value="2">Type 2</option>
-</select>
     
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=1728781649&single=true&output=csv';
@@ -189,17 +177,6 @@
     let allData = []; // Biến chính lưu trữ dữ liệu
     let currentIndex = 0;
     let totalItems = 0;
-
-    // const select = document.getElementById("type-select");
-
-    // // set option hiện tại
-    // select.value = currentType;
-
-    // // khi đổi type
-    // select.addEventListener("change", () => {
-    //     window.location.search =
-    //         `?type=${select.value}&no=${numero}`;
-    // });
 
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -257,6 +234,11 @@
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
+                <select id="type-select">
+                    <option value="0">Type 0</option>
+                    <option value="1">Type 1</option>
+                    <option value="2">Type 2</option>
+                </select>
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
@@ -265,7 +247,7 @@
                             <span class="ipa-text">${item['ipa'] || ''}</span>
                         </div>
                     </div>
-
+                </div>
 
                 <div class="meaning">
                           Meaning: <a class="lang-link" href="${item['meaning_vi'] || '#'}">vi</a>
@@ -293,6 +275,20 @@
                 
             </div>
         `;
+
+        const typeSelect = document.getElementById("type-select");
+
+        typeSelect.value = type;
+
+        typeSelect.addEventListener("change", () => {
+
+            const params = new URLSearchParams(window.location.search);
+
+            params.set("type", typeSelect.value);
+            params.set("no", numero);
+
+            window.location.search = params.toString();
+        });
         updateDots();
     }
     
