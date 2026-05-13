@@ -317,25 +317,25 @@
             const newType = select.value;
 
             if (!newType) return;
-
+            const index_row = Number(item['stt'])+1
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
-          `?row=${item.row}&type=${newType}`;
+          `?row=${index_row}&type=${newType}`;
 
-            console.log(item.row);
+            console.log(index_row);
             console.log(newType);
-            window.open(url, "_blank");
+            // window.open(url, "_blank");
 
-            // const iframe = document.createElement("iframe");
+            const iframe = document.createElement("iframe");
 
-            // iframe.style.display = "none";
+            iframe.style.display = "none";
 
-            // iframe.src = url;
+            iframe.src = url;
 
-            // document.body.appendChild(iframe);
+            document.body.appendChild(iframe);
 
-            // item.type = newType;
+            item.type = newType;
 
-            // alert("Đã cập nhật");
+            alert("Đã cập nhật");
         });
         
         updateDots();
