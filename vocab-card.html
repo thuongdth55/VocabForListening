@@ -321,17 +321,21 @@
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
           `?row=${item.row}&type=${newType}`;
 
-            const iframe = document.createElement("iframe");
+            console.log(item.row);
+            console.log(newType);
+            window.open(url, "_blank");
 
-            iframe.style.display = "none";
+            // const iframe = document.createElement("iframe");
 
-            iframe.src = url;
+            // iframe.style.display = "none";
 
-            document.body.appendChild(iframe);
+            // iframe.src = url;
 
-            item.type = newType;
+            // document.body.appendChild(iframe);
 
-            alert("Đã cập nhật");
+            // item.type = newType;
+
+            // alert("Đã cập nhật");
         });
         
         updateDots();
