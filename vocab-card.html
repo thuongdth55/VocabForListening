@@ -318,14 +318,12 @@
 
         if (!newType) return;
 
-        await fetch("https://script.google.com/macros/s/AKfycbz-Tah0Kf8S5I0_NLwY-WrpagcLdhqa2GEbaU7srqa67kOay37ah9sfACeRKnnPDLdpQA/exec", {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify({
-                row: item.row,
-                type: newType
-            })
-        });
+        const url = "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/dev/exec" +
+          `?row=${item.row}&type=${newType}`;
+
+        const response = await fetch(url);
+
+        const result = await response.json();
 
         item.type = newType;
 
