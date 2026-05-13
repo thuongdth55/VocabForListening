@@ -246,6 +246,14 @@
                 <div class="meaning">
                           Meaning: <a class="lang-link" href="${item['meaning_vi'] || '#'}">vi</a>
                                    <a class="lang-link spacing-left" href="${item['meaning_en'] || '#'}">en</a>
+                                   <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+                <a class="lang-link"  href="${item['video_link'] || '#'}"
+                    style="color: #ff0000; font-weight: bold; text-decoration: none;">
+    
+                    <i class="fa-brands fa-youtube"></i>
+                </a>
                 </div>
                 
                 ${item['verb forms'] ? `
@@ -256,14 +264,6 @@
                     </div>
                 ` : ''}
 
-                <link rel="stylesheet"
-                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-                <a class="lang-link"  href="${item['video_link'] || '#'}"
-                    style="color: #ff0000; font-weight: bold; text-decoration: none;">
-    
-                    <i class="fa-brands fa-youtube"></i>
-                </a>
                 <div class="section-title">⚡Sentence Examples</div>
                 <div style="background:white; padding:15px; border-radius:15px;">${examplesHtml}</div>
                 
