@@ -147,57 +147,12 @@
                 color:#ff0000;
                 font-size:22px;
         }
-        .setting-wrapper{
-    position: relative;
-    display: inline-block;
-}
-
-.setting-btn{
-    border: none;
-    background: white;
-    cursor: pointer;
-    font-size: 22px;
-    color: #666;
-    padding: 8px;
+        #type-select{
+    padding: 6px 10px;
     border-radius: 10px;
-    transition: 0.2s;
-}
-
-.setting-btn:hover{
-    background: #f3f3f3;
-    color: #111;
-}
-
-.setting-dropdown{
-    position: absolute;
-    top: 42px;
-    right: 0;
-
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-
-    min-width: 120px;
-
-    display: none;
-    overflow: hidden;
-    z-index: 999;
-}
-
-.setting-dropdown a{
-    display: block;
-    padding: 10px 14px;
-    text-decoration: none;
-    color: #333;
-    transition: 0.15s;
-}
-
-.setting-dropdown a:hover{
-    background: #f5f5f5;
-}
-
-.setting-wrapper.active .setting-dropdown{
-    display: block;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    cursor: pointer;
 }
         .ext-han { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
         .ext-pinyin { font-size: 14px; color: var(--primary); }
@@ -217,6 +172,12 @@
     <button class="nav-btn" onpointerdown="nextPage()">→</button>
 </div>
 
+<select id="type-select">
+    <option value="0">Type 0</option>
+    <option value="1">Type 1</option>
+    <option value="2">Type 2</option>
+</select>
+    
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=1728781649&single=true&output=csv';
     const sheetVideoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=0&single=true&output=csv';
@@ -225,12 +186,20 @@
     const numero = Number(params.get("no"));
     const selected_type = Number(params.get("type")) || 0;
 
-    const wrapper = document.querySelector(".setting-wrapper");
-    const btn = document.querySelector(".setting-btn");
-    
     let allData = []; // Biến chính lưu trữ dữ liệu
     let currentIndex = 0;
     let totalItems = 0;
+
+    const select = document.getElementById("type-select");
+
+    // set option hiện tại
+    select.value = currentType;
+
+    // khi đổi type
+    select.addEventListener("change", () => {
+        window.location.search =
+            `?type=${select.value}&no=${numero}`;
+    });
 
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -268,15 +237,6 @@
         });
     }
 
-    btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        wrapper.classList.toggle("active");
-    });
-
-    document.addEventListener("click", () => {
-        wrapper.classList.remove("active");
-    });
-
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -306,22 +266,6 @@
                         </div>
                     </div>
 
-                    <!-- Font Awesome -->
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<div class="setting-wrapper">
-    <button class="setting-btn">
-        <i class="fa-solid fa-gear"></i>
-    </button>
-
-    <div class="setting-dropdown">
-        <a href="?type=0&no=${numero}">Type 0</a>
-        <a href="?type=1&no=${numero}">Type 1</a>
-        <a href="?type=2&no=${numero}">Type 2</a>
-    </div>
-</div>
-                </div>
 
                 <div class="meaning">
                           Meaning: <a class="lang-link" href="${item['meaning_vi'] || '#'}">vi</a>
