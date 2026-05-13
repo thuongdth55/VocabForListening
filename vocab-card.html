@@ -165,6 +165,12 @@
 <div id="loading">Đang tải dữ liệu...</div>
 <div id="book">
     </div>
+
+<div class="nav-control">
+    <button class="nav-btn" onpointerdown="prevPage()">←</button>
+    <div id="pageDots" class="dots"></div>
+    <button class="nav-btn" onpointerdown="nextPage()">→</button>
+</div>
     
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=1728781649&single=true&output=csv';
