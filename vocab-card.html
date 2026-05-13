@@ -190,16 +190,16 @@
     let currentIndex = 0;
     let totalItems = 0;
 
-    const select = document.getElementById("type-select");
+    // const select = document.getElementById("type-select");
 
-    // set option hiện tại
-    select.value = currentType;
+    // // set option hiện tại
+    // select.value = currentType;
 
-    // khi đổi type
-    select.addEventListener("change", () => {
-        window.location.search =
-            `?type=${select.value}&no=${numero}`;
-    });
+    // // khi đổi type
+    // select.addEventListener("change", () => {
+    //     window.location.search =
+    //         `?type=${select.value}&no=${numero}`;
+    // });
 
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -271,13 +271,13 @@
                           Meaning: <a class="lang-link" href="${item['meaning_vi'] || '#'}">vi</a>
                                    <a class="lang-link spacing-left" href="${item['meaning_en'] || '#'}">en    </a>
                                    <link rel="stylesheet"
-                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+                                        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-                <a class="lang-link"  href="${item['video_link'] || '#'}"
-                    style="color: #ff0000; font-weight: bold; text-decoration: none;">
+                                    <a class="lang-link"  href="${item['video_link'] || '#'}"
+                                        style="color: #ff0000; font-weight: bold; text-decoration: none;">
     
-                    <i class="fa-brands fa-youtube"></i>
-                </a>
+                                        <i class="fa-brands fa-youtube"></i>
+                                    </a>
                 </div>
                 
                 ${item['verb forms'] ? `
