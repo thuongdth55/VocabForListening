@@ -237,6 +237,15 @@
 
         const examplesHtml = generateVocabHtml(item['examples']);
 
+        const currentType = String(item["type"]);
+
+        const allTypes = ["0", "1", "2"];
+
+        const availableTypes =
+            allTypes.filter(t => t !== currentType);
+
+        const select = document.getElementById("change-type-select");
+
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
@@ -278,7 +287,10 @@
 
                 <div class="section-title">⚡Sentence Examples</div>
                 <div style="background:white; padding:15px; border-radius:15px;">${examplesHtml}</div>
-                
+                <option value="">Chuyển trạng thái</option>
+                    ${availableTypes.map(t =>
+                    `<option value="${t}">Type ${t}</option>`
+                    ).join("")}
             </div>
         `;
 
@@ -295,6 +307,26 @@
 
             window.location.search = params.toString();
         });
+
+        select.addEventListener("change", async () => {
+
+        const newType = select.value;
+
+        if (!newType) return;
+
+        // await fetch(YOUR_WEBAPP_URL, {
+        //     method: "POST",
+        //     body: JSON.stringify({
+        //     row: item.row,
+        //     type: newType
+        //     })
+        // });
+
+        // item.type = newType;
+
+        alert("Đã cập nhật");
+        });
+        
         updateDots();
     }
     
