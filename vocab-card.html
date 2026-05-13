@@ -143,6 +143,10 @@
                 border-left: 3px solid #1E90FF; /* Thanh nhấn màu xanh dương bên trái */
                 border-radius: 8px;
         }
+        .fa-youtube{
+                color:#ff0000;
+                font-size:22px;
+        }
         .ext-han { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
         .ext-pinyin { font-size: 14px; color: var(--primary); }
         .speak-btn { background: none; border: 1px solid #eee; border-radius: 50%; cursor: pointer; }
@@ -252,10 +256,14 @@
                     </div>
                 ` : ''}
 
-                <a class="lang-link" href="${item['video_link'] || '#'}" style="color: #3498db; font-weight: bold; text-decoration: none;">
-                    Watch Video
+                <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+                <a class="lang-link"  href="${item['video_link'] || '#'}"
+                    style="color: #ff0000; font-weight: bold; text-decoration: none;">
+    
+                    <i class="fa-brands fa-youtube"></i>
                 </a>
-                
                 <div class="section-title">⚡Sentence Examples</div>
                 <div style="background:white; padding:15px; border-radius:15px;">${examplesHtml}</div>
                 
