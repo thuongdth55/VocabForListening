@@ -241,11 +241,27 @@
                             <span class="ipa-text">${item['ipa'] || ''}</span>
                         </div>
                     </div>
+
+                    <!-- Font Awesome -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<div class="setting-wrapper">
+    <button class="setting-btn">
+        <i class="fa-solid fa-gear"></i>
+    </button>
+
+    <div class="setting-dropdown">
+        <a href="?type=0">Type 0</a>
+        <a href="?type=1">Type 1</a>
+        <a href="?type=3">Type 2</a>
+    </div>
+</div>
                 </div>
 
                 <div class="meaning">
                           Meaning: <a class="lang-link" href="${item['meaning_vi'] || '#'}">vi</a>
-                                   <a class="lang-link spacing-left" href="${item['meaning_en'] || '#'}">en</a>
+                                   <a class="lang-link spacing-left" href="${item['meaning_en'] || '#'}">en    </a>
                                    <link rel="stylesheet"
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
