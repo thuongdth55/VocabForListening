@@ -318,12 +318,13 @@
 
         if (!newType) return;
 
-        const url = "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
+        const img = new Image();
+
+        img.src =
+          "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
           `?row=${item.row}&type=${newType}`;
 
-        const response = await fetch(url);
-
-        const result = await response.json();
+        // window.open(url, "_blank");
 
         item.type = newType;
 
