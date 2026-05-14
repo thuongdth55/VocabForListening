@@ -187,13 +187,12 @@
     const sheetVideoUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=0&single=true&output=csv';
 
     const params = new URLSearchParams(window.location.search);
-    const numero = Number(params.get("no"));
-    const selected_type = Number(params.get("type")) || 0;
 
     let allData = []; // Biến chính lưu trữ dữ liệu
     let currentIndex = 0;
     let totalItems = 0;
-
+    let filteredData = [];
+    
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
         Papa.parse(sheetUrl, {
@@ -201,35 +200,76 @@
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                // Lọc dữ liệu
-                // allData = results.data.filter(item => item['Status']?.trim() === selectedStatus);
-                allData = results.data.filter(item => {
-                        // Ép kiểu stage về số và trim Status để so sánh an toàn
-                        const w_no = Number(item['No']);
-                        const w_type = Number(item['type']);
-                        const w = item['word']?.toString().trim();
-                        // Dùng && (Logical AND) thay vì & (Bitwise)
-                        return w_no === numero && w_type === selected_type && !!w;
-                });
-   
-                // GIẢI PHÓNG BỘ NHỚ: Xóa kết quả gốc của PapaParse
-                results = null; 
-
-                const loading = document.getElementById('loading');
-                loading.style.display = 'none';
-
-                if (allData.length === 0) {
-                    document.getElementById('book').innerHTML = '<div class="empty-state">Không có dữ liệu sẵn sàng.</div>';
-                    return;
-                }
-                
+                allData = results.data;
                 totalItems = allData.length;
-                renderCard(currentIndex);
-                createDots();
+                renderSearchBox();
             }
         });
     }
 
+    function renderSearchBox() {
+        const searchContainer = document.getElementById('search-container');
+
+        searchContainer.innerHTML = `
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input
+                type="text"
+                id="search-input"
+                placeholder="Search word..."
+                style="
+                    flex:1;
+                    padding:10px 14px;
+                    border-radius:12px;
+                    border:1px solid #ddd;
+                    font-size:14px;
+                "
+            />
+
+            <button
+                onclick="searchWord()"
+                style="
+                    padding:10px 18px;
+                    border:none;
+                    border-radius:12px;
+                    background:#2e7d32;
+                    color:white;
+                    cursor:pointer;
+                    font-weight:bold;
+                "
+            >
+                Search
+            </button>
+            </div>
+        `;
+    }
+
+    function searchWord() {
+
+        const keyword = document
+            .getElementById('search-input')
+            .value
+            .trim()
+            .toLowerCase();
+
+        filteredData = allData.filter(item => {
+            const word = item['word']?.toLowerCase() || '';
+            return word.includes(keyword);
+        });
+
+        currentIndex = 0;
+
+        totalItems = filteredData.length;
+
+        if (filteredData.length === 0) {
+            document.getElementById('book').innerHTML =
+                '<div class="empty-state">Không tìm thấy từ.</div>';
+            return;
+        }
+
+        renderCard(currentIndex);
+        createDots();
+    }
+    
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
