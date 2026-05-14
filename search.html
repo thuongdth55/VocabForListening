@@ -21,7 +21,7 @@
             background-color: var(--bg);
             color: var(--text);
             overflow: hidden; /* Chặn cuộn toàn trang để tránh lỗi nhảy lung tung */
-            height: 100vh;
+            min-height: 100dvh;
         }
 
         #book {
@@ -156,6 +156,7 @@
             cursor: pointer;
             background-color: #166534; /* xanh */
             color: white;              /* chữ trắng */
+            margin-bottom: 30px;
         }
         .ext-han { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
         .ext-pinyin { font-size: 14px; color: var(--primary); }
@@ -274,6 +275,7 @@
 
         renderCard(currentIndex);
         createDots();
+        input.blur();
     }
     
     function shuffleArray(array) {
