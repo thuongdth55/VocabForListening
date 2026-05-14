@@ -167,8 +167,15 @@
 <body>
 
 <div id="loading">Đang tải dữ liệu...</div>
-
 <div id="search-container"></div>
+<button
+    id="hidden-focus"
+    style="
+            position:fixed;
+            opacity:0;
+            pointer-events:none;
+        "
+></button>
 <div id="book">
     </div>
 
@@ -214,7 +221,7 @@
                     style="
                         display:flex;
                         gap:10px;
-                        margin-bottom:15px;
+                        margin-bottom:5px;
                     "
                 >
                 <input
@@ -242,8 +249,8 @@
             searchWord();
 
             document
-                .getElementById('search-input')
-                .blur();
+            .getElementById('hidden-focus')
+            .focus();
         });
         
         // const input = document.getElementById('search-input');
