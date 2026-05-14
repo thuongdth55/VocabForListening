@@ -204,6 +204,7 @@
             complete: function(results) {
                 allData = results.data;
                 totalItems = allData.length;
+                document.getElementById('loading').style.display = 'none';
                 renderSearchBox();
             }
         });
@@ -282,7 +283,7 @@
     // Hàm render ĐÚNG 1 CARD duy nhất
     function renderCard(index) {
         const book = document.getElementById('book');
-        const item = allData[index];
+        const item = filteredData[index];
         
         // Reset vị trí cuộn lên đầu card mới
         book.scrollTop = 0;
@@ -347,20 +348,6 @@
                 </select>
             </div>
         `;
-
-        const typeSelect = document.getElementById("type-select");
-
-        typeSelect.value = selected_type;
-
-        typeSelect.addEventListener("change", () => {
-
-            const params = new URLSearchParams(window.location.search);
-
-            params.set("type", typeSelect.value);
-            params.set("no", numero);
-
-            window.location.search = params.toString();
-        });
 
         const select = document.getElementById("change-type-select");
 
