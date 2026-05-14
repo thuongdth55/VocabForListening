@@ -147,14 +147,7 @@
                 color:#ff0000;
                 font-size:22px;
         }
-        #type-select{
-            padding: 6px 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
+        
         #change-type-select{
             padding: 6px 10px;
             border-radius: 10px;
@@ -244,6 +237,16 @@
             </button>
             </div>
         `;
+        const input = document.getElementById('search-input');
+
+        input.addEventListener('keydown', function(event) {
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            searchWord();
+        }
+
+    });
     }
 
     function searchWord() {
@@ -256,7 +259,7 @@
 
         filteredData = allData.filter(item => {
             const word = item['word']?.toLowerCase() || '';
-            return word.includes(keyword);
+            return word.startsWith(keyword);
         });
 
         currentIndex = 0;
@@ -300,11 +303,6 @@
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
-                <select id="type-select">
-                    <option value="0">Type 0</option>
-                    <option value="1">Type 1</option>
-                    <option value="2">Type 2</option>
-                </select>
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
