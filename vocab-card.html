@@ -142,32 +142,42 @@ body{
 
     font-weight:900;
 
-    line-height:1;
+    line-height:1.03;
 
-    letter-spacing:-1.5px;
+    letter-spacing:-1.2px;
 
-    font-size:clamp(38px,8vw,64px);
+    font-size:clamp(38px,8vw,62px);
+
+    color:#2f4558;
 
     background:
         linear-gradient(
             180deg,
-            #1e3a5f 0%,
-            #295b86 28%,
-            #3f88a8 55%,
-            #17324d 100%
+            #2b3d4f 0%,
+            #32485d 55%,
+            #243342 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
+    /* chiều sâu */
+
     filter:
-        contrast(1.08)
-        saturate(1.15);
+        saturate(0.95)
+        contrast(1.02);
+
+    /* bóng nổi lên mặt giấy */
 
     text-shadow:
-        0 2px 10px rgba(25,60,95,0.18);
-}
+        0 1px 0 rgba(255,255,255,0.35),
+        0 2px 0 rgba(255,255,255,0.22),
+        0 3px 6px rgba(25,35,45,0.18),
+        0 6px 14px rgba(20,30,40,0.14);
 
+    position:relative;
+}
+        
 .big-char::-webkit-scrollbar{
     height:6px;
 }
