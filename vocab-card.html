@@ -3,170 +3,399 @@
 <head>
     <link rel="preconnect" href="https://raw.githubusercontent.com">
     <link rel="dns-prefetch" href="https://raw.githubusercontent.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vocab Deepen</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
-        :root {
-            --primary: #00a86b;
-            --secondary: #1a5fb4;
-            --bg: #f2f2f7;
-            --text: #2c3e50;
-        }
 
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            overflow: hidden; /* Chặn cuộn toàn trang để tránh lỗi nhảy lung tung */
-            height: 100vh;
-        }
+        :root{
+    --bg1:#0f172a;
+    --bg2:#1e293b;
 
-        #book {
-            height: 100vh;
-            width: 100%;
-            overflow-y: auto; /* Chỉ cho phép cuộn bên trong nội dung thẻ nếu thẻ quá dài */
-            -webkit-overflow-scrolling: touch;
-        }
+    --card:#ffffff0d;
+    --border:rgba(255,255,255,0.08);
 
-        .flashcard {
-            min-height: 100vh;
-            width: 100%;
-            padding: 20px;
-            padding-bottom: 120px; 
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            animation: fadeIn 0.3s ease; /* Hiệu ứng chuyển trang nhẹ nhàng */
-        }
+    --text:#f8fafc;
+    --muted:#cbd5e1;
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    --gold:#f59e0b;
+    --orange:#ea580c;
 
-        .header-section {
-                         background: white; border: 2px solid var(--primary); 
-                         border-radius: 20px; padding: 20px; 
-                         display: flex;
-                         flex-direction: column;   /* thêm */
+    --blue:#93c5fd;
+}
 
-                         justify-content: center;
-                         align-items: flex-start;      /* thêm */
+*{
+    box-sizing:border-box;
+}
 
-                         box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-                         gap: 20px; /* Tạo khoảng cách an toàn ở giữa */
-                        }
-        .big-char { font-size: 50px; font-weight: bold; margin: 0; line-height: 1; }
-        .info-top {
-                display: flex;
-                flex-direction: column;
-                text-align: left;      
-                align-items: center;  /* sửa */
-                text-align: center;   /* sửa */
-                margin-left: 0;       /* bỏ auto */
-        }
-        .ipa-text {
-                color: #e67e22; /* Màu cam đất (dễ nhìn) */
-                font-weight: 500; /* Làm chữ đậm hơn một chút để nổi bật */
-        }
-        .ext-en { font-weight: bold }
-        .ext-ipa  {color: #e67e22; }
-        .spacing-left {
-                /* 20px tương đương khoảng 4-5 dấu cách bình thường */
-                margin-left: 18px; 
-                text-decoration: none;
-                color: #3498db;
-                font-weight: bold;
-        }
-        .lang-link {
-                color: #3498db;        /* Đổi màu text thành xanh dương */
-                text-decoration: none; /* Bỏ gạch chân mặc định nếu muốn */
-                font-weight: bold;     /* Làm chữ đậm cho dễ bấm */
-                font-size: 23px;
-        }
-        .section-title { display: flex; align-items: center; gap: 8px; font-weight: bold; color: var(--secondary); margin-top: 5px; }
-        .component-box { background: white; border-left: 6px solid #ff9f43; border-radius: 12px; padding: 15px; }
-        .total-strokes { background: #e1f5fe; color: var(--primary); text-align: center; padding: 10px; border-radius: 10px; font-weight: bold; }
-        .mnemonic-grid {
-                display: block; /* Chuyển về dạng khối thông thường */
-                width: 100%;
-                margin-bottom: 15px; /* Khoảng cách với phần nội dung bên dưới */
-        }
-        .mnemonic-text { background: #fff9db; padding: 15px; border-radius: 15px; font-size: 13px; line-height: 1.5; }
-        .mnemonic-img {
-            width: 100%; 
-            /* Thay đổi chiều cao từ 120px thành auto hoặc một con số lớn hơn để ảnh hiển thị rõ nét hơn khi đứng một mình */
-            height: auto; 
-            max-height: 400px; /* Giới hạn chiều cao tối đa để không choán hết màn hình */
-    
-            object-fit: contain; /* Dùng contain để thấy toàn bộ ảnh mà không bị mất góc */
-            border-radius: 15px;
-            background: #eee;
-            display: block;
-        }
-        .stroke-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: white; padding: 10px; border-radius: 15px; }
-        .stroke-item { width: 100%; aspect-ratio: 1/1; object-fit: contain; }
-        
-        /* Nav Control tối ưu cho Android */
-        .nav-control {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 12px 25px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            z-index: 9999;
-        }
+html,
+body{
+    margin:0;
+    padding:0;
+    font-family:'Be Vietnam Pro',sans-serif;
+    background:
+        radial-gradient(circle at top left,var(--bg2),var(--bg1) 60%);
+    color:var(--text);
+    height:100%;
+    overflow:hidden;
+}
 
-        .nav-btn { 
-            background: none; border: none; font-size: 24px; cursor: pointer; color: #333; 
-            touch-action: manipulation; padding: 5px 15px;
-        }
-        
-        .dots { display: flex; gap: 8px; }
-        .dot { width: 8px; height: 8px; background: #ddd; border-radius: 50%; }
-        .dot.active { background: var(--primary); width: 20px; border-radius: 10px; }
+#book{
+    height:100vh;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+}
 
-        .ext-vocab-item { background: #f9fafb; border: 1px solid #eee; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-        .ext-vocab-item:hover {
-                background-color: #f0f7ff; /* Màu xanh dương cực nhạt */
-                border-left: 3px solid #1E90FF; /* Thanh nhấn màu xanh dương bên trái */
-                border-radius: 8px;
-        }
-        .fa-youtube{
-                color:#ff0000;
-                font-size:22px;
-        }
-        #type-select{
-            padding: 6px 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            cursor: pointer;
-        }
+.flashcard{
+    min-height:100vh;
+    padding:22px;
+    padding-bottom:140px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    animation:fadeIn .35s ease;
+}
 
-        #change-type-select{
-            padding: 6px 10px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            font-size: 14px;
-            cursor: pointer;
-            background-color: #166534; /* xanh */
-            color: white;              /* chữ trắng */
-        }
-        .ext-han { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: bold; }
-        .ext-pinyin { font-size: 14px; color: var(--primary); }
-        .speak-btn { background: none; border: 1px solid #eee; border-radius: 50%; cursor: pointer; }
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ===== HERO ===== */
+
+.header-section{
+    background:
+        linear-gradient(135deg,#334155,#111827);
+
+    border:1px solid var(--border);
+
+    border-radius:28px;
+
+    padding:28px;
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,0.35);
+
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.big-char{
+    margin:0;
+
+    font-size:56px;
+    line-height:1.05;
+
+    font-weight:700;
+
+    letter-spacing:-1px;
+
+    background:
+        linear-gradient(90deg,#fde68a,#f97316);
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    overflow-x:auto;
+    white-space:nowrap;
+    scrollbar-width:thin;
+}
+
+.big-char::-webkit-scrollbar{
+    height:6px;
+}
+
+.big-char::-webkit-scrollbar-thumb{
+    background:rgba(255,255,255,0.2);
+    border-radius:999px;
+}
+
+.info-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.ipa-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.ipa-tag{
+    padding:6px 12px;
+    border-radius:999px;
+
+    background:rgba(255,255,255,0.08);
+
+    color:var(--muted);
+
+    font-size:13px;
+}
+
+.ipa-text{
+    color:var(--blue);
+    font-size:18px;
+    font-weight:500;
+}
+
+/* ===== COMMON CARD ===== */
+
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    color:#fde68a;
+
+    font-weight:700;
+
+    margin-top:6px;
+}
+
+.meaning,
+.verb-forms-section,
+.examples-box,
+.ext-vocab-item{
+    background:var(--card);
+
+    border:1px solid var(--border);
+
+    border-radius:22px;
+
+    backdrop-filter:blur(12px);
+}
+
+/* ===== MEANING ===== */
+
+.meaning{
+    padding:18px;
+    line-height:1.8;
+    font-size:16px;
+}
+
+/* ===== LINKS ===== */
+
+.lang-link{
+    color:#93c5fd;
+    text-decoration:none;
+    font-weight:700;
+    font-size:20px;
+}
+
+.spacing-left{
+    margin-left:16px;
+}
+
+.lang-link:hover{
+    opacity:0.85;
+}
+
+/* ===== VERB FORMS ===== */
+
+.verb-forms-section{
+    padding:16px 18px !important;
+
+    color:#e2e8f0 !important;
+
+    background:rgba(255,255,255,0.05) !important;
+
+    border-left:4px solid #f59e0b !important;
+}
+
+/* ===== EXAMPLES ===== */
+
+.examples-box{
+    padding:16px;
+}
+
+.ext-vocab-item{
+    padding:16px;
+    margin-bottom:12px;
+
+    transition:0.25s;
+}
+
+.ext-vocab-item:hover{
+    transform:translateY(-2px);
+
+    background:rgba(255,255,255,0.08);
+
+    border-color:rgba(255,255,255,0.14);
+}
+
+.ext-en{
+    font-weight:700;
+    line-height:1.7;
+    margin-bottom:6px;
+}
+
+.ext-ipa{
+    color:#93c5fd;
+    margin-bottom:8px;
+}
+
+.ext-vi{
+    color:#e2e8f0;
+    line-height:1.7;
+}
+
+/* ===== SELECT ===== */
+
+#type-select,
+#change-type-select{
+    width:fit-content;
+
+    padding:12px 16px;
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,0.12);
+
+    background:#0f172a;
+
+    color:white;
+
+    font-size:14px;
+
+    cursor:pointer;
+
+    outline:none;
+}
+
+#change-type-select{
+    background:
+        linear-gradient(135deg,#166534,#15803d);
+
+    border:none;
+}
+
+/* ===== NAV ===== */
+
+.nav-control{
+    position:fixed;
+
+    bottom:24px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    background:rgba(15,23,42,0.82);
+
+    border:1px solid rgba(255,255,255,0.08);
+
+    backdrop-filter:blur(16px);
+
+    padding:12px 22px;
+
+    border-radius:999px;
+
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+    z-index:9999;
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.35);
+}
+
+.nav-btn{
+    border:none;
+    background:none;
+
+    color:white;
+
+    font-size:26px;
+
+    cursor:pointer;
+
+    padding:4px 10px;
+}
+
+.nav-btn:hover{
+    opacity:0.8;
+}
+
+.dots{
+    display:flex;
+    gap:8px;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,0.18);
+
+    transition:0.25s;
+}
+
+.dot.active{
+    width:24px;
+
+    background:
+        linear-gradient(90deg,#f59e0b,#f97316);
+}
+
+/* ===== LOADING ===== */
+
+#loading{
+    position:fixed;
+    inset:0;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:#0f172a;
+
+    color:white;
+
+    font-size:20px;
+
+    z-index:10000;
+}
+
+/* ===== MOBILE ===== */
+
+@media(max-width:700px){
+
+    .flashcard{
+        padding:18px;
+        padding-bottom:130px;
+    }
+
+    .header-section{
+        padding:22px;
+    }
+
+    .big-char{
+        font-size:42px;
+    }
+
+    .ipa-text{
+        font-size:16px;
+    }
+
+    .lang-link{
+        font-size:18px;
+    }
+}
         #loading { position: fixed; inset: 0; background: white; display: flex; justify-content: center; align-items: center; z-index: 10000; }
     </style>
 </head>
@@ -296,7 +525,7 @@
                 ` : ''}
 
                 <div class="section-title">⚡Sentence Examples</div>
-                <div style="background:white; padding:15px; border-radius:15px;">${examplesHtml}</div>
+                <div class="examples-box">${examplesHtml}</div>
                 
                 <select id="change-type-select">
                     <option value="">Chuyển trạng thái</option>
