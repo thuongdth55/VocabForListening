@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Word Formation Viewer</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:'Be Vietnam Pro',sans-serif;
+    background:
+        radial-gradient(circle at top left,#1e293b,#0f172a 60%);
+    color:white;
+    padding:30px 16px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.hero{
+    background:linear-gradient(135deg,#334155,#111827);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:28px;
+    padding:34px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    margin-bottom:30px;
+}
+
+.label{
+    display:inline-block;
+    padding:6px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.08);
+    color:#cbd5e1;
+    font-size:13px;
+    margin-bottom:18px;
+}
+
+.main-word{
+    font-size:56px;
+    font-weight:700;
+    letter-spacing:-1px;
+    margin-bottom:10px;
+    background:linear-gradient(90deg,#fde68a,#f97316);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.main-ipa{
+    font-size:20px;
+    color:#cbd5e1;
+}
+
+.timeline{
+    position:relative;
+    margin-top:30px;
+    padding-left:26px;
+    border-left:3px solid rgba(255,255,255,0.12);
+}
+
+.step{
+    position:relative;
+    margin-bottom:26px;
+}
+
+.dot{
+    position:absolute;
+    left:-37px;
+    top:18px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#f59e0b,#fb7185);
+    box-shadow:0 0 0 6px rgba(251,113,133,0.15);
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:22px;
+    padding:22px;
+    backdrop-filter:blur(12px);
+    transition:0.25s;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+}
+
+.card.final{
+    background:
+        linear-gradient(135deg,#f59e0b,#ea580c);
+}
+
+.top{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.word{
+    font-size:28px;
+    font-weight:700;
+}
+
+.ipa{
+    font-size:15px;
+    color:#93c5fd;
+}
+
+.card.final .ipa{
+    color:#fff7ed;
+}
+
+.desc{
+    line-height:1.8;
+    color:#e2e8f0;
+    white-space:pre-line;
+}
+
+.arrow{
+    text-align:center;
+    font-size:32px;
+    margin:10px 0;
+    color:#fbbf24;
+}
+
+.structure{
+    margin-top:16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.piece{
+    background:rgba(255,255,255,0.16);
+    padding:10px 16px;
+    border-radius:14px;
+    font-weight:600;
+}
+
+textarea{
+    width:100%;
+    height:180px;
+    background:#0f172a;
+    color:white;
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:20px;
+    padding:18px;
+    font-size:15px;
+    margin-bottom:20px;
+    resize:vertical;
+    font-family:monospace;
+}
+
+button{
+    border:none;
+    background:linear-gradient(135deg,#f59e0b,#ea580c);
+    color:white;
+    padding:14px 24px;
+    border-radius:16px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    margin-bottom:30px;
+}
+
+button:hover{
+    opacity:0.92;
+}
+
+@media(max-width:700px){
+
+    .main-word{
+        font-size:40px;
+    }
+
+    .word{
+        font-size:24px;
+    }
+
+    .hero{
+        padding:24px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <textarea id="tsvInput">
+word	ipa	w1	w2	w3	w4	w5	w6	w7	w8
+evolutionary	/ˌiː.vəˈluː.ʃən.ər.i/	volve * /vɑːlv/ * cuộn/xoay	revolve * /rɪˈvɑːlv/ * Xoay vòng quanh một trục	involve * /ɪnˈvɑːlv/ * Cuộn vào trong	evolve * /ɪˈvɑːlv/ * Cuộn mở ra ngoài	evolution * /ˌev.əˈluː.ʃən/ * thêm đuôi -ion thành danh từ	evolutionary * /ˌiː.vəˈluː.ʃən.ər.i/ * thêm đuôi -ary thành tính từ
+    </textarea>
+
+    <button onclick="renderWord()">Render Word Structure</button>
+
+    <div id="app"></div>
+
+</div>
+
+<script>
+
+function renderWord(){
+
+    const raw = document.getElementById("tsvInput").value.trim();
+
+    const rows = raw.split("\n");
+
+    if(rows.length < 2){
+        return;
+    }
+
+    const headers = rows[0].split("\t");
+    const values = rows[1].split("\t");
+
+    const data = {};
+
+    headers.forEach((h,i)=>{
+        data[h] = values[i] || "";
+    });
+
+    const app = document.getElementById("app");
+
+    // ===== tìm w cuối cùng =====
+
+    let steps = [];
+
+    for(let i=1;i<=8;i++){
+
+        const key = "w" + i;
+
+        if(data[key] && data[key].trim() !== ""){
+            steps.push(data[key]);
+        }
+    }
+
+    // ===== parse từng step =====
+
+    const parsedSteps = steps.map(step=>{
+
+        // format:
+        // word * ipa * desc
+
+        const parts = step.split("*").map(v=>v.trim());
+
+        return {
+            word: parts[0] || "",
+            ipa: parts[1] || "",
+            desc: parts.slice(2).join(" * ") || ""
+        };
+    });
+
+    // ===== build html =====
+
+    let html = `
+        <div class="hero">
+            <div class="label">Word Formation Analysis</div>
+
+            <div class="main-word">${data.word || ""}</div>
+
+            <div class="main-ipa">${data.ipa || ""}</div>
+        </div>
+
+        <div class="timeline">
+    `;
+
+    parsedSteps.forEach((item,index)=>{
+
+        const isFinal = index === parsedSteps.length - 1;
+
+        html += `
+
+            <div class="step">
+
+                <div class="dot"></div>
+
+                <div class="card ${isFinal ? 'final' : ''}">
+
+                    <div class="top">
+                        <div class="word">${item.word}</div>
+
+                        <div class="ipa">${item.ipa}</div>
+                    </div>
+
+                    <div class="desc">
+                        ${item.desc}
+                    </div>
+
+                    ${
+                        isFinal
+                        ?
+                        `
+                        <div class="structure">
+                            ${
+                                parsedSteps.map(s=>`
+                                    <div class="piece">${s.word}</div>
+                                `).join("")
+                            }
+                        </div>
+                        `
+                        :
+                        ""
+                    }
+
+                </div>
+
+            </div>
+
+            ${
+                !isFinal
+                ?
+                `<div class="arrow">↓</div>`
+                :
+                ""
+            }
+
+        `;
+    });
+
+    html += `</div>`;
+
+    app.innerHTML = html;
+}
+
+renderWord();
+
+</script>
+
+</body>
+</html>
