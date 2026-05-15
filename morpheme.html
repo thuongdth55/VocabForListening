@@ -233,7 +233,7 @@ const search_word = params.get("word");
 let mor_w = null; 
     
 function renderWord(){
-            const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = new URLSearchParams(window.location.search);
         Papa.parse(sheetUrl, {
             download: true,
             header: true,
@@ -249,7 +249,6 @@ function renderWord(){
                     return;
                 }
                 mor_w = searchData[0];
-                renderWord(mor_w)
             }
         });
     
