@@ -142,45 +142,37 @@ body{
 
     font-weight:900;
 
-    line-height:1.02;
+    line-height:1;
 
-    letter-spacing:-1.3px;
+    letter-spacing:-1.5px;
 
-    font-size:clamp(38px,8vw,64px);
-
-    /* đỏ burgundy sâu hơn */
+    font-size:clamp(40px,8vw,66px);
 
     background:
         linear-gradient(
-            180deg,
-            #5c121b 0%,
-            #7d1d28 36%,
-            #9a2d39 64%,
-            #471018 100%
+            135deg,
+            #3257ff 0%,
+            #5b6cff 28%,
+            #8b5cf6 68%,
+            #5b21b6 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* KHÔNG dùng contrast/saturate mạnh nữa
-       vì làm màu bị bợt */
+    /* nổi mạnh nhưng vẫn mềm */
 
     filter:
-        drop-shadow(0 2px 2px rgba(35,8,12,0.10))
-        drop-shadow(0 6px 10px rgba(25,6,10,0.14));
-
-    /* emboss kiểu giấy nhưng giữ màu */
+        drop-shadow(0 2px 2px rgba(60,70,180,0.10))
+        drop-shadow(0 8px 18px rgba(80,60,180,0.16));
 
     text-shadow:
 
-        /* highlight rất nhẹ */
-        0 1px 0 rgba(255,245,238,0.10),
-
-        /* bóng sát mép */
-        0 2px 3px rgba(28,6,10,0.22),
+        /* emboss nhẹ */
+        0 1px 0 rgba(255,255,255,0.14),
 
         /* chiều sâu */
-        0 5px 10px rgba(22,4,8,0.16);
+        0 3px 6px rgba(40,30,120,0.16);
 
     position:relative;
 }
