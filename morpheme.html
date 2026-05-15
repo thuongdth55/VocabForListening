@@ -222,25 +222,36 @@ button:hover{
 <body>
 
 <script>
-
-function renderWord(){
-
-    const raw = document.getElementById("tsvInput").value.trim();
-
-    const rows = raw.split("\n");
-
-    if(rows.length < 2){
-        return;
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=754335089&single=true&output=csv';
+    
+    const params = new URLSearchParams(window.location.search);
+    const search_word = params.get("word");
+    let mor_w = null;
+    
+    function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        Papa.parse(sheetUrl, {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                let searchData = results.data.filter(item => {
+                        const w = item['word']?.toString().trim();
+                        return w == search_word;
+                });
+                
+                if (searchData.length === 0) {
+                    document.getElementById('book').innerHTML = '<div class="empty-state">Từ này chưa được phân tích</div>';
+                    return;
+                }
+                mor_w = searchData[0];
+                document.getElementById('loading').style.display = 'none';
+                renderWord(mor_w)
+            }
+        });
     }
-
-    const headers = rows[0].split("\t");
-    const values = rows[1].split("\t");
-
-    const data = {};
-
-    headers.forEach((h,i)=>{
-        data[h] = values[i] || "";
-    });
+    
+function renderWord(data){
 
     const app = document.getElementById("app");
 
@@ -265,7 +276,7 @@ function renderWord(){
         // word * ipa * desc
 
         const parts = step.split("*").map(v=>v.trim());
-
+        console.log(parts.slice(2).join(" * "))
         return {
             word: parts[0] || "",
             ipa: parts[1] || "",
