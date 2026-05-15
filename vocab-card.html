@@ -141,38 +141,38 @@ body{
     margin:0;
 
     font-weight:900;
-    font-family:'Be Vietnam Pro',sans-serif;
-    line-height:1;
 
-    letter-spacing:-1.5px;
+    line-height:1.02;
 
-    font-size:clamp(40px,8vw,66px);
+    letter-spacing:-1.3px;
+
+    font-size:clamp(40px,8vw,64px);
 
     background:
         linear-gradient(
             135deg,
-            #3257ff 0%,
-            #5b6cff 28%,
-            #8b5cf6 68%,
-            #5b21b6 100%
+            #245766 0%,
+            #3c6e7a 42%,
+            #5a7f88 70%,
+            #284652 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* nổi mạnh nhưng vẫn mềm */
+    /* nổi nhẹ trên giấy */
 
     filter:
-        drop-shadow(0 2px 2px rgba(60,70,180,0.10))
-        drop-shadow(0 8px 18px rgba(80,60,180,0.16));
+        drop-shadow(0 2px 2px rgba(30,50,60,0.10))
+        drop-shadow(0 8px 16px rgba(20,35,45,0.12));
 
     text-shadow:
 
-        /* emboss nhẹ */
-        0 1px 0 rgba(255,255,255,0.14),
+        /* emboss rất nhẹ */
+        0 1px 0 rgba(255,255,255,0.10),
 
         /* chiều sâu */
-        0 3px 6px rgba(40,30,120,0.16);
+        0 3px 5px rgba(20,35,45,0.14);
 
     position:relative;
 }
@@ -396,14 +396,8 @@ body{
 
     border:1px solid var(--border);
 
-    /* background:#efe4d4; */
-    background: linear-gradient(
-            135deg,
-            #3257ff 0%,
-            #5b6cff 28%,
-            #8b5cf6 68%,
-            #5b21b6 100%
-        );
+    background:#efe4d4;
+    
     color:var(--text);
 
     font-size:15px;
