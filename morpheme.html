@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <title>Word Formation Viewer</title>
-
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -221,6 +221,10 @@ button:hover{
 
 <body>
 
+<div class="container">
+    <div id="app"></div>
+</div>
+
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=754335089&single=true&output=csv';
     
@@ -228,8 +232,9 @@ button:hover{
     const search_word = params.get("word");
     let mor_w = null;
     
-    function init() {
-        const urlParams = new URLSearchParams(window.location.search);
+    
+function renderWord(){
+            const urlParams = new URLSearchParams(window.location.search);
         Papa.parse(sheetUrl, {
             download: true,
             header: true,
@@ -241,18 +246,15 @@ button:hover{
                 });
                 
                 if (searchData.length === 0) {
-                    document.getElementById('book').innerHTML = '<div class="empty-state">Từ này chưa được phân tích</div>';
+                    document.getElementById('app').innerHTML = '<div class="empty-state">Từ này chưa được phân tích</div>';
                     return;
                 }
                 mor_w = searchData[0];
-                document.getElementById('loading').style.display = 'none';
                 console.log(mor_w)
                 renderWord(mor_w)
             }
         });
-    }
     
-function renderWord(mor_w){
     const app = document.getElementById("app");
     console.log(mor_w.word)
     console.log(mor_w.ipa)
