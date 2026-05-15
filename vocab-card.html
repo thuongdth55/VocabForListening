@@ -151,37 +151,38 @@ body{
     background:
         linear-gradient(
             135deg,
-            #1f4d5b 0%,
-            #3f6f7b 42%,
-            #5d8790 68%,
-            #213f49 100%
+            #7fbc6d 0%,
+            #5f9855 38%,
+            #467a42 72%,
+            #2f5a32 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* tăng độ nổi */
+    /* giữ màu xanh sâu và nổi */
 
     filter:
-        saturate(1.05)
-        contrast(1.06)
-        drop-shadow(0 2px 2px rgba(18,35,42,0.10))
-        drop-shadow(0 8px 18px rgba(18,35,42,0.16));
+        saturate(1.04)
+        contrast(1.05)
+        drop-shadow(0 2px 2px rgba(30,55,28,0.10))
+        drop-shadow(0 8px 18px rgba(25,45,24,0.15));
 
-    /* emboss nổi trên giấy */
+    /* hiệu ứng nổi trên giấy */
 
     text-shadow:
 
-        /* viền sáng rất nhẹ */
-        0 1px 0 rgba(255,255,255,0.16),
+        /* highlight mặt trên */
+        0 1px 0 rgba(255,255,255,0.14),
 
         /* chiều sâu sát chữ */
-        0 2px 3px rgba(16,28,34,0.18),
+        0 2px 4px rgba(24,42,20,0.18),
 
         /* bóng nổi */
-        0 6px 14px rgba(14,24,30,0.16);
+        0 6px 14px rgba(18,32,16,0.15);
 
-    /* edge highlight giúp chữ bật hơn */
+    /* viền sáng nhẹ giúp bật nền */
+
     -webkit-text-stroke:
         0.35px rgba(255,255,255,0.08);
 
