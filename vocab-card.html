@@ -142,38 +142,49 @@ body{
 
     font-weight:900;
 
-    line-height:1.03;
+    line-height:1.02;
 
-    letter-spacing:-1.2px;
+    letter-spacing:-1.3px;
 
-    font-size:clamp(38px,8vw,62px);
-
-    color:#2f4558;
+    font-size:clamp(38px,8vw,64px);
 
     background:
         linear-gradient(
             180deg,
-            #2b3d4f 0%,
-            #32485d 55%,
-            #243342 100%
+            #4a161b 0%,
+            #7a2831 38%,
+            #9f4248 68%,
+            #341015 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* chiều sâu */
+    /* giữ màu sâu */
 
     filter:
-        saturate(0.95)
-        contrast(1.02);
+        saturate(1.08)
+        contrast(1.06);
 
-    /* bóng nổi lên mặt giấy */
+    /* hiệu ứng dập nổi trên giấy */
 
     text-shadow:
-        0 1px 0 rgba(255,255,255,0.35),
-        0 2px 0 rgba(255,255,255,0.22),
-        0 3px 6px rgba(25,35,45,0.18),
-        0 6px 14px rgba(20,30,40,0.14);
+
+        /* highlight mặt trên */
+        0 -1px 0 rgba(255,255,255,0.22),
+
+        /* ánh sáng giấy */
+        0 1px 0 rgba(255,248,240,0.30),
+        0 2px 0 rgba(255,245,235,0.18),
+
+        /* bóng chìm sát chữ */
+        0 3px 4px rgba(45,10,16,0.24),
+
+        /* bóng đổ chính */
+        0 6px 12px rgba(35,8,12,0.20),
+
+        /* ambient shadow */
+        0 12px 24px rgba(20,5,8,0.10);
 
     position:relative;
 }
