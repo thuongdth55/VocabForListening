@@ -576,8 +576,20 @@ body{
     }
 
     .big-char{
-        font-size:clamp(30px,9vw,48px);
+        font-size:clamp(40px,9vw,50px);
     }
+
+    .big-char.small{
+    font-size:clamp(24px,6vw,32px);
+}
+
+.big-char.medium{
+    font-size:clamp(28px,7vw,38px);
+}
+
+.big-char.large{
+    font-size:clamp(34px,8vw,46px);
+}
 
     .ipa-text{
         font-size:16px;
@@ -788,13 +800,13 @@ body{
             const textLength = bigChar.textContent.trim().length;
 
             if(textLength >= 22){
-                bigChar.style.fontSize = "32px";
+                bigChar.classList.add("small");
             }
             else if(textLength >= 18){
-                bigChar.style.fontSize = "38px";
+                bigChar.classList.add("medium");
             }
             else if(textLength >= 14){
-                bigChar.style.fontSize = "46px";
+                bigChar.classList.add("large");
             }
         }
         
