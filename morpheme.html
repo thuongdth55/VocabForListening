@@ -233,123 +233,129 @@ const search_word = params.get("word");
 let mor_w = null; 
     
 function renderWord(){
-        const urlParams = new URLSearchParams(window.location.search);
-        Papa.parse(sheetUrl, {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                let searchData = results.data.filter(item => {
-                        const w = item['word']?.toString().trim();
-                        return w == search_word;
-                });
-                
-                if (searchData.length === 0) {
-                    document.getElementById('app').innerHTML = '<div class="empty-state">Từ này chưa được phân tích</div>';
-                    return;
-                }
-                mor_w = searchData[0];
+
+    Papa.parse(sheetUrl, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+
+        complete: function(results) {
+
+            let searchData = results.data.filter(item => {
+                const w = item['word']?.toString().trim();
+                return w == search_word;
+            });
+
+            if (searchData.length === 0) {
+                document.getElementById('app').innerHTML =
+                    '<div class="empty-state">Từ này chưa được phân tích</div>';
+                return;
             }
-        });
-    
-    const app = document.getElementById("app");
-    // ===== tìm w cuối cùng =====
-    console.log(mor_w)
-    let steps = [];
 
-    for(let i=1;i<=8;i++){
+            mor_w = searchData[0];
 
-        const key = "w" + i;
-        if(mor_w[key] && mor_w[key].trim() !== ""){
-            steps.push(mor_w[key]);
-        }
-    }
+            const app = document.getElementById("app");
 
-    // ===== parse từng step =====
+            console.log(mor_w);
 
-    const parsedSteps = steps.map(step=>{
+            let steps = [];
 
-        // format:
-        // word * ipa * desc
+            for(let i=1;i<=8;i++){
 
-        const parts = step.split("*").map(v=>v.trim());
-        return {
-            word: parts[0] || "",
-            ipa: parts[1] || "",
-            desc: parts.slice(2).join(" * ") || ""
-        };
-    });
+                const key = "w" + i;
 
-    // ===== build html =====
+                if(mor_w[key] && mor_w[key].trim() !== ""){
+                    steps.push(mor_w[key]);
+                }
+            }
 
-    let html = `
-        <div class="hero" onclick="event.stopPropagation(); speak_en('${mor_w.word.replace(/'/g, "\\'")}')">
-            <div class="label">Word Formation Analysis</div>
-            <div class="word-wrapper">
-                    <div class="main-word">${mor_w.word || ""}</div>
-                    <div class="main-ipa">${mor_w.ipa || ""}</div>       
-            </div>
-        </div>
+            const parsedSteps = steps.map(step=>{
 
-        <div class="timeline">
-    `;
+                const parts = step.split("*").map(v=>v.trim());
 
-    parsedSteps.forEach((item,index)=>{
+                return {
+                    word: parts[0] || "",
+                    ipa: parts[1] || "",
+                    desc: parts.slice(2).join(" * ") || ""
+                };
+            });
 
-        const isFinal = index === parsedSteps.length - 1;
+            let html = `
+                <div class="hero"
+                    onclick="event.stopPropagation(); speak_en('${mor_w.word.replace(/'/g, "\\'")}')">
 
-        html += `
+                    <div class="label">Word Formation Analysis</div>
 
-            <div class="step">
-
-                <div class="dot"></div>
-
-                <div class="card ${isFinal ? 'final' : ''}" onclick="event.stopPropagation(); speak_en('${item.word.replace(/'/g, "\\'")}')">
-
-                    <div class="top">
-                            <div class="word">${item.word}</div>
-
-                            <div class="ipa">${item.ipa}</div>
+                    <div class="word-wrapper">
+                        <div class="main-word">${mor_w.word || ""}</div>
+                        <div class="main-ipa">${mor_w.ipa || ""}</div>
                     </div>
-
-                    <div class="desc">
-                        ${item.desc}
-                    </div>
-
-                    ${
-                        isFinal
-                        ?
-                        `
-                        <div class="structure">
-                            ${
-                                parsedSteps.map(s=>`
-                                    <div class="piece">${s.word}</div>
-                                `).join("")
-                            }
-                        </div>
-                        `
-                        :
-                        ""
-                    }
 
                 </div>
 
-            </div>
+                <div class="timeline">
+            `;
 
-            ${
-                !isFinal
-                ?
-                `<div class="arrow">↓</div>`
-                :
-                ""
-            }
+            parsedSteps.forEach((item,index)=>{
 
-        `;
+                const isFinal = index === parsedSteps.length - 1;
+
+                html += `
+
+                    <div class="step">
+
+                        <div class="dot"></div>
+
+                        <div class="card ${isFinal ? 'final' : ''}"
+                            onclick="event.stopPropagation(); speak_en('${item.word.replace(/'/g, "\\'")}')">
+
+                            <div class="top">
+
+                                <div class="word">${item.word}</div>
+
+                                <div class="ipa">${item.ipa}</div>
+
+                            </div>
+
+                            <div class="desc">
+                                ${item.desc}
+                            </div>
+
+                            ${
+                                isFinal
+                                ?
+                                `
+                                <div class="structure">
+                                    ${
+                                        parsedSteps.map(s=>`
+                                            <div class="piece">${s.word}</div>
+                                        `).join("")
+                                    }
+                                </div>
+                                `
+                                :
+                                ""
+                            }
+
+                        </div>
+
+                    </div>
+
+                    ${
+                        !isFinal
+                        ?
+                        `<div class="arrow">↓</div>`
+                        :
+                        ""
+                    }
+                `;
+            });
+
+            html += `</div>`;
+
+            app.innerHTML = html;
+        }
     });
-
-    html += `</div>`;
-
-    app.innerHTML = html;
 }
 
 function speak_en(text) {
