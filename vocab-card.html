@@ -148,43 +148,39 @@ body{
 
     font-size:clamp(38px,8vw,64px);
 
+    /* đỏ burgundy sâu hơn */
+
     background:
         linear-gradient(
             180deg,
-            #4a161b 0%,
-            #7a2831 38%,
-            #9f4248 68%,
-            #341015 100%
+            #5c121b 0%,
+            #7d1d28 36%,
+            #9a2d39 64%,
+            #471018 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* giữ màu sâu */
+    /* KHÔNG dùng contrast/saturate mạnh nữa
+       vì làm màu bị bợt */
 
     filter:
-        saturate(1.08)
-        contrast(1.06);
+        drop-shadow(0 2px 2px rgba(35,8,12,0.10))
+        drop-shadow(0 6px 10px rgba(25,6,10,0.14));
 
-    /* hiệu ứng dập nổi trên giấy */
+    /* emboss kiểu giấy nhưng giữ màu */
 
     text-shadow:
 
-        /* highlight mặt trên */
-        0 -1px 0 rgba(255,255,255,0.22),
+        /* highlight rất nhẹ */
+        0 1px 0 rgba(255,245,238,0.10),
 
-        /* ánh sáng giấy */
-        0 1px 0 rgba(255,248,240,0.30),
-        0 2px 0 rgba(255,245,235,0.18),
+        /* bóng sát mép */
+        0 2px 3px rgba(28,6,10,0.22),
 
-        /* bóng chìm sát chữ */
-        0 3px 4px rgba(45,10,16,0.24),
-
-        /* bóng đổ chính */
-        0 6px 12px rgba(35,8,12,0.20),
-
-        /* ambient shadow */
-        0 12px 24px rgba(20,5,8,0.10);
+        /* chiều sâu */
+        0 5px 10px rgba(22,4,8,0.16);
 
     position:relative;
 }
