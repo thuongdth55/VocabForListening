@@ -226,12 +226,11 @@ button:hover{
 </div>
 
 <script>
-    const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=754335089&single=true&output=csv';
+const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=754335089&single=true&output=csv';
     
-    const params = new URLSearchParams(window.location.search);
-    const search_word = params.get("word");
-    let mor_w = null;
-    
+const params = new URLSearchParams(window.location.search);
+const search_word = params.get("word");
+let mor_w = null; 
     
 function renderWord(){
             const urlParams = new URLSearchParams(window.location.search);
@@ -250,14 +249,11 @@ function renderWord(){
                     return;
                 }
                 mor_w = searchData[0];
-                console.log(mor_w)
                 renderWord(mor_w)
             }
         });
     
     const app = document.getElementById("app");
-    console.log(mor_w.word)
-    console.log(mor_w.ipa)
     // ===== tìm w cuối cùng =====
 
     let steps = [];
@@ -265,7 +261,6 @@ function renderWord(){
     for(let i=1;i<=8;i++){
 
         const key = "w" + i;
-        console.log(mor_w[key], key);
         if(mor_w[key] && mor_w[key].trim() !== ""){
             steps.push(mor_w[key]);
         }
@@ -279,7 +274,6 @@ function renderWord(){
         // word * ipa * desc
 
         const parts = step.split("*").map(v=>v.trim());
-        console.log(parts.slice(2).join(" * "))
         return {
             word: parts[0] || "",
             ipa: parts[1] || "",
@@ -290,7 +284,7 @@ function renderWord(){
     // ===== build html =====
 
     let html = `
-        <div class="hero">
+        <div class="hero" onclick="event.stopPropagation(); speak_en('${mor_w.word.replace(/'/g, "\\'")}')">
             <div class="label">Word Formation Analysis</div>
             <div class="word-wrapper">
                     <div class="main-word">${mor_w.word || ""}</div>
@@ -311,7 +305,7 @@ function renderWord(){
 
                 <div class="dot"></div>
 
-                <div class="card ${isFinal ? 'final' : ''}">
+                <div class="card ${isFinal ? 'final' : ''}" onclick="event.stopPropagation(); speak_en('${item.word.replace(/'/g, "\\'")}')">
 
                     <div class="top">
                             <div class="word">${item.word}</div>
@@ -359,6 +353,24 @@ function renderWord(){
     app.innerHTML = html;
 }
 
+function speak_en(text) {
+        if (!text) return;
+    
+        // Dừng các yêu cầu nói cũ
+        window.speechSynthesis.cancel();
+
+        // Làm sạch chuỗi: Thay / thành dấu phẩy để nghỉ nhịp, 
+        // và đảm bảo các ký tự đặc biệt không gây lỗi
+        const cleanText = text.replace(/\//g, ',');
+
+        const utter = new SpeechSynthesisUtterance(cleanText);
+        utter.lang = 'en-US';
+    
+        // Tùy chỉnh màu xanh dương cho tâm trạng vui vẻ
+        utter.rate = 0.9; // Đọc chậm lại một chút cho rõ
+    
+        window.speechSynthesis.speak(utter);
+}
 renderWord();
 
 </script>
