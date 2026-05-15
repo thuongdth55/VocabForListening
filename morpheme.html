@@ -56,6 +56,8 @@ body{
     background:linear-gradient(90deg,#fde68a,#f97316);
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
+    white-space:nowrap;
+    min-width:max-content;
 }
 
 .main-ipa{
@@ -112,7 +114,7 @@ body{
     margin-bottom:12px;
 }
 
-    .word-wrapper{
+.word-wrapper{
     overflow-x:auto;
     overflow-y:hidden;
     scrollbar-width:thin;
@@ -131,8 +133,6 @@ body{
 .word{
     font-size:28px;
     font-weight:700;
-    white-space:nowrap;
-    min-width:max-content;
 }
 
 .ipa{
@@ -221,19 +221,6 @@ button:hover{
 
 <body>
 
-<div class="container">
-
-    <textarea id="tsvInput">
-word	ipa	w1	w2	w3	w4	w5	w6	w7	w8
-evolutionary	/ˌiː.vəˈluː.ʃən.ər.i/	volve * /vɑːlv/ * cuộn/xoay	revolve * /rɪˈvɑːlv/ * Xoay vòng quanh một trục	involve * /ɪnˈvɑːlv/ * Cuộn vào trong	evolve * /ɪˈvɑːlv/ * Cuộn mở ra ngoài	evolution * /ˌev.əˈluː.ʃən/ * thêm đuôi -ion thành danh từ	evolutionary * /ˌiː.vəˈluː.ʃən.ər.i/ * thêm đuôi -ary thành tính từ
-    </textarea>
-
-    <button onclick="renderWord()">Render Word Structure</button>
-
-    <div id="app"></div>
-
-</div>
-
 <script>
 
 function renderWord(){
@@ -291,10 +278,10 @@ function renderWord(){
     let html = `
         <div class="hero">
             <div class="label">Word Formation Analysis</div>
-
-            <div class="main-word">${data.word || ""}</div>
-
-            <div class="main-ipa">${data.ipa || ""}</div>
+            <div class="word-wrapper">
+                    <div class="main-word">${data.word || ""}</div>
+                    <div class="main-ipa">${data.ipa || ""}</div>       
+            </div>
         </div>
 
         <div class="timeline">
@@ -313,12 +300,9 @@ function renderWord(){
                 <div class="card ${isFinal ? 'final' : ''}">
 
                     <div class="top">
-                        <div class="word-wrapper">
                             <div class="word">${item.word}</div>
 
                             <div class="ipa">${item.ipa}</div>
-                        </div>
-                        
                     </div>
 
                     <div class="desc">
