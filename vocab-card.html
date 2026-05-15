@@ -140,27 +140,34 @@ body{
 
     margin:0;
 
-    font-weight:700;
+    font-weight:800;
 
-    line-height:1.08;
+    line-height:1.02;
 
-    letter-spacing:-0.5px;
+    letter-spacing:-1px;
+
+    font-size:clamp(36px,8vw,62px);
 
     background:
         linear-gradient(
-            90deg,
-            #8a6b4f,
-            #a07d5f
+            180deg,
+            #fff4d6 0%,
+            #f6d28b 18%,
+            #c08a3c 40%,
+            #7a4a1e 72%,
+            #3b2414 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    overflow:hidden;
+    text-shadow:
+        0 1px 0 rgba(255,255,255,0.25),
+        0 2px 10px rgba(120,70,20,0.18);
 
-    word-break:keep-all;
-
-    font-size:clamp(34px,8vw,58px);
+    filter:
+        saturate(1.08)
+        contrast(1.04);
 }
 
 .big-char::-webkit-scrollbar{
