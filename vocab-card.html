@@ -146,7 +146,8 @@ body{
 
     letter-spacing:-1.3px;
 
-    font-size:clamp(40px,8vw,64px);
+    font-size: 60px;
+    /* font-size:clamp(40px,8vw,64px); */
 
     background:
         linear-gradient(
@@ -751,6 +752,10 @@ body{
             </div>
         `;
 
+        fitBigChar();
+
+        window.addEventListener("resize",fitBigChar);
+
         const typeSelect = document.getElementById("type-select");
 
         typeSelect.value = selected_type;
@@ -915,6 +920,34 @@ body{
             </div>
         `).join('');
     }
+    function fitBigChar(){
+
+    const bigChar = document.querySelector(".big-char");
+
+    const container = document.querySelector(".header-section");
+
+    if(!bigChar || !container) return;
+
+    // reset size trước
+    let fontSize = 64;
+
+    bigChar.style.fontSize = fontSize + "px";
+
+    // chiều rộng tối đa cho phép
+    const maxWidth = container.clientWidth - 56;
+
+    // giảm dần đến khi vừa
+    while(
+        bigChar.scrollWidth > maxWidth &&
+        fontSize > 20
+    ){
+
+        fontSize--;
+
+        bigChar.style.fontSize = fontSize + "px";
+    }
+}
+    
     init();
 </script>
 </body>
