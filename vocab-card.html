@@ -151,28 +151,39 @@ body{
     background:
         linear-gradient(
             135deg,
-            #245766 0%,
-            #3c6e7a 42%,
-            #5a7f88 70%,
-            #284652 100%
+            #1f4d5b 0%,
+            #3f6f7b 42%,
+            #5d8790 68%,
+            #213f49 100%
         );
 
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
 
-    /* nổi nhẹ trên giấy */
+    /* tăng độ nổi */
 
     filter:
-        drop-shadow(0 2px 2px rgba(30,50,60,0.10))
-        drop-shadow(0 8px 16px rgba(20,35,45,0.12));
+        saturate(1.05)
+        contrast(1.06)
+        drop-shadow(0 2px 2px rgba(18,35,42,0.10))
+        drop-shadow(0 8px 18px rgba(18,35,42,0.16));
+
+    /* emboss nổi trên giấy */
 
     text-shadow:
 
-        /* emboss rất nhẹ */
-        0 1px 0 rgba(255,255,255,0.10),
+        /* viền sáng rất nhẹ */
+        0 1px 0 rgba(255,255,255,0.16),
 
-        /* chiều sâu */
-        0 3px 5px rgba(20,35,45,0.14);
+        /* chiều sâu sát chữ */
+        0 2px 3px rgba(16,28,34,0.18),
+
+        /* bóng nổi */
+        0 6px 14px rgba(14,24,30,0.16);
+
+    /* edge highlight giúp chữ bật hơn */
+    -webkit-text-stroke:
+        0.35px rgba(255,255,255,0.08);
 
     position:relative;
 }
@@ -229,7 +240,8 @@ body{
 
 .ipa-text{
 
-    color:#7b6754;
+    /* color:#7b6754; */
+    color: #4f5f73;
 
     font-size:18px;
 
@@ -414,17 +426,24 @@ body{
 
 #change-type-select{
 
-    background:
+    /* background:
         linear-gradient(
             135deg,
             #c7ae91,
             #b99673
-        );
+        ); */
+
+    background:
+    linear-gradient(
+        135deg,
+        #6ea85f,
+        #467a42
+    );
 
     border:none;
 
-    color:#4e3d30;
-
+    /* color:#4e3d30; */
+    color: #f7f1e8;
     font-weight:700;
 }
 
