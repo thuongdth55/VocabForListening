@@ -246,15 +246,16 @@ button:hover{
                 }
                 mor_w = searchData[0];
                 document.getElementById('loading').style.display = 'none';
+                console.log(mor_w)
                 renderWord(mor_w)
             }
         });
     }
     
-function renderWord(data){
-
+function renderWord(mor_w){
     const app = document.getElementById("app");
-
+    console.log(mor_w.word)
+    console.log(mor_w.ipa)
     // ===== tìm w cuối cùng =====
 
     let steps = [];
@@ -262,9 +263,9 @@ function renderWord(data){
     for(let i=1;i<=8;i++){
 
         const key = "w" + i;
-
-        if(data[key] && data[key].trim() !== ""){
-            steps.push(data[key]);
+        console.log(mor_w[key], key);
+        if(mor_w[key] && mor_w[key].trim() !== ""){
+            steps.push(mor_w[key]);
         }
     }
 
@@ -290,8 +291,8 @@ function renderWord(data){
         <div class="hero">
             <div class="label">Word Formation Analysis</div>
             <div class="word-wrapper">
-                    <div class="main-word">${data.word || ""}</div>
-                    <div class="main-ipa">${data.ipa || ""}</div>       
+                    <div class="main-word">${mor_w.word || ""}</div>
+                    <div class="main-ipa">${mor_w.ipa || ""}</div>       
             </div>
         </div>
 
