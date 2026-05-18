@@ -360,6 +360,9 @@
             </div>
         `;
 
+        fitBigChar();
+        window.addEventListener("resize",fitBigChar);
+        
         const select = document.getElementById("change-type-select");
 
         select.addEventListener("change", async () => {
@@ -387,7 +390,7 @@
 
             alert("Đã cập nhật");
         });
-        
+
         updateDots();
     }
     
@@ -426,6 +429,47 @@
         });
     }
 
+    function fitBigChar(){
+
+        const bigChar = document.querySelector(".big-char");
+        const container = document.querySelector(".header-section");
+
+        if(!bigChar || !container) return;
+
+        const measure = document.createElement("span");
+
+        measure.style.position = "absolute";
+        measure.style.visibility = "hidden";
+        measure.style.whiteSpace = "nowrap";
+
+        measure.style.fontWeight = getComputedStyle(bigChar).fontWeight;
+        measure.style.letterSpacing = getComputedStyle(bigChar).letterSpacing;
+        measure.style.fontFamily = getComputedStyle(bigChar).fontFamily;
+
+        measure.textContent = bigChar.textContent;
+
+        document.body.appendChild(measure);
+
+        let fontSize = 55;
+
+        const maxWidth = container.clientWidth;
+
+        while(fontSize > 20){
+
+            measure.style.fontSize = fontSize + "px";
+
+            if(measure.offsetWidth <= maxWidth){
+                break;
+            }
+
+            fontSize--;
+        }
+
+        bigChar.style.fontSize = fontSize + "px";
+
+        measure.remove();
+    }
+    
     function nl2br(text) { return text ? text.replace(/\\n/g, '<br>') : ''; }
 
     function parseExtendedVocab(text) {
