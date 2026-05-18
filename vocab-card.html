@@ -923,32 +923,51 @@ body{
             </div>
         `).join('');
     }
-    function fitBigChar(){
+
+function fitBigChar(){
 
     const bigChar = document.querySelector(".big-char");
-
     const container = document.querySelector(".header-section");
 
     if(!bigChar || !container) return;
 
-    // reset size trước
+    const measure = document.createElement("span");
+
+    measure.style.position = "absolute";
+    measure.style.visibility = "hidden";
+    measure.style.whiteSpace = "nowrap";
+
+    measure.style.fontWeight =
+        getComputedStyle(bigChar).fontWeight;
+
+    measure.style.letterSpacing =
+        getComputedStyle(bigChar).letterSpacing;
+
+    measure.style.fontFamily =
+        getComputedStyle(bigChar).fontFamily;
+
+    measure.textContent = bigChar.textContent;
+
+    document.body.appendChild(measure);
+
     let fontSize = 64;
+
+    const maxWidth = container.clientWidth - 56;
+
+    while(fontSize > 20){
+
+        measure.style.fontSize = fontSize + "px";
+
+        if(measure.offsetWidth <= maxWidth){
+            break;
+        }
+
+        fontSize--;
+    }
 
     bigChar.style.fontSize = fontSize + "px";
 
-    // chiều rộng tối đa cho phép
-    const maxWidth = container.clientWidth - 56;
-
-    // giảm dần đến khi vừa
-    while(
-        bigChar.scrollWidth > maxWidth &&
-        fontSize > 20
-    ){
-
-        fontSize--;
-
-        bigChar.style.fontSize = fontSize + "px";
-    }
+    measure.remove();
 }
     
     init();
