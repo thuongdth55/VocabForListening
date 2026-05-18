@@ -728,7 +728,10 @@ body{
                                         <i class="fa-brands fa-youtube"></i>
                                     </a>
 
-                                    <a class="lang-link" href="morpheme.html?word=${item['word'] || '#'}">mor</a>
+                                    ${item['hasMorpheme'] == 1 
+                                            ? `<a class="lang-link" href="morpheme.html?word=${item['word'] || '#'}">mor</a>` 
+                                            : ''
+                                    }
                 </div>
                 
                 ${item['verb forms'] ? `
@@ -798,22 +801,22 @@ body{
             alert("Đã cập nhật");
         });
 
-        const bigChar = document.querySelector(".big-char");
+        // const bigChar = document.querySelector(".big-char");
 
-        if(bigChar){
+        // if(bigChar){
 
-            const textLength = bigChar.textContent.trim().length;
+        //     const textLength = bigChar.textContent.trim().length;
 
-            if(textLength >= 22){
-                bigChar.classList.add("small");
-            }
-            else if(textLength >= 18){
-                bigChar.classList.add("medium");
-            }
-            else if(textLength >= 14){
-                bigChar.classList.add("large");
-            }
-        }
+        //     if(textLength >= 22){
+        //         bigChar.classList.add("small");
+        //     }
+        //     else if(textLength >= 18){
+        //         bigChar.classList.add("medium");
+        //     }
+        //     else if(textLength >= 14){
+        //         bigChar.classList.add("large");
+        //     }
+        // }
         
         updateDots();
     }
