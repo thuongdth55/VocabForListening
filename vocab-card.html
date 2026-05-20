@@ -732,6 +732,7 @@ body{
                                             ? `<a class="lang-link" href="morpheme.html?word=${item['word'] || '#'}">mor</a>` 
                                             : ''
                                     }
+                                    <div class="ext-vi">${item['meaning'].replace(/\n/g, '<br>')}</div>
                 </div>
                 
                 ${item['verb forms'] ? `
