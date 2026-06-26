@@ -744,9 +744,10 @@ body{
                         <option value="${g}">Group ${g}</option>
                         `).join("")}
                     </select>
-                </div>
-                <div style="margin:2px 0; font-size:13px; color:#666; text-align:center;">
-                    <span style="color:red; font-weight:bold;">${index + 1}</span> / ${groupCount}
+
+                    <div style="margin:2px 0; font-size:13px; color:#666; text-align:left;">
+                        <span style="color:green; font-weight:bold;">${index + 1}</span> / ${groupCount}
+                    </div>
                 </div>
                 
                 <div class="header-section" onclick="speak_en('${item['word']}')">
