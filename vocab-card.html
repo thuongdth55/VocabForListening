@@ -725,6 +725,15 @@ body{
         const availableTypes =
             allTypes.filter(t => t !== currentType);
 
+        let groupCount = 0;
+
+        if (selected_type > 0) {
+            groupCount = allData.filter(item => {
+                const w_group = item['group'] ? Number(item['group']) : -1;
+                return w_group === selected_group;
+            }).length;
+        }
+        
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
@@ -743,7 +752,13 @@ body{
                         `).join("")}
                     </select>
                 </div>
-                
+
+                ${selected_type > 0 && selected_group > 0 ? `
+                    <div style="margin-top:6px; font-size:13px; color:#666;">
+                        Group ${selected_group}: ${groupCount} từ
+                    </div>
+                ` : ""}
+
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
