@@ -392,6 +392,7 @@ body{
 ========================= */
 
 #type-select,
+#group-select,
 #change-type-select{
 
     width:fit-content;
@@ -719,11 +720,6 @@ body{
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
-                // <select id="type-select">
-                //     <option value="0">Type 0</option>
-                //     <option value="1">Type 1</option>
-                //     <option value="2">Type 2</option>
-                // </select>
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <select id="type-select">
                         <option value="0">Type 0</option>
