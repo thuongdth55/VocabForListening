@@ -649,32 +649,36 @@ body{
             skipEmptyLines: true,
             complete: function(results) {
                 // Lọc dữ liệu
-                // allData = results.data.filter(item => item['Status']?.trim() === selectedStatus);
-                allData = results.data.filter(item => {
-                        // Ép kiểu stage về số và trim Status để so sánh an toàn
-                        const w_no = Number(item['No']);
-                        const w_type = Number(item['type']);
-                        const w_group = item['group'] ? Number(item['group']) : -1;
-                        const w = item['word']?.toString().trim();
+                // Lọc theo No + Type trước
+                const baseData = results.data.filter(item => {
+                    const w_no = Number(item['No']);
+                    const w_type = Number(item['type']);
+                    const w = item['word']?.toString().trim();
 
-                        if (selected_group === 0) {
-                            return w_no === numero &&
-                                   w_type === selected_type &&
-                                   !!w;
-                        }
-
-                        return w_no === numero &&
-                               w_type === selected_type &&
-                               !!w &&
-                               w_group === selected_group;
+                    return w_no === numero &&
+                       w_type === selected_type &&
+                       !!w;
                 });
-                
+
                 // Lấy tất cả group khác nhau
                 allGroups = [...new Set(
-                        allData
-                            .map(item => item.group)
-                            .filter(g => g !== undefined && g !== null && g !== "")
-                        )].sort((a, b) => Number(a) - Number(b));
+                    baseData
+                        .map(item => item['group'])
+                        .filter(g => g !== undefined && g !== null && g !== "")
+                        .map(g => Number(g))
+                    )].sort((a, b) => a - b);
+
+                // Lọc tiếp theo group
+                // Nếu chọn All Groups thì giữ nguyên
+                if (selected_group === 0) {
+                    allData = baseData;
+                } else {
+                    allData = baseData.filter(item => {
+                        const w_group = item['group'] ? Number(item['group']) : -1;
+                        return w_group === selected_group;
+                    });
+                }
+                
                 // GIẢI PHÓNG BỘ NHỚ: Xóa kết quả gốc của PapaParse
                 results = null; 
 
@@ -817,14 +821,13 @@ body{
             window.location.search = params.toString();
         });
 
-        console.log("selected_group =", selected_group);
-
-console.log(
-    [...groupSelect.options].map(o => ({
-        text: o.text,
-        value: o.value
-    }))
-);
+        // console.log("selected_group =", selected_group);
+        // console.log(
+        //     [...groupSelect.options].map(o => ({
+        //         text: o.text,
+        //         value: o.value
+        //     }))
+        // );
 
         const select = document.getElementById("change-type-select");
 
@@ -837,8 +840,8 @@ console.log(
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
           `?row=${index_row}&type=${newType}`;
 
-            console.log(index_row);
-            console.log(newType);
+            // console.log(index_row);
+            // console.log(newType);
             // window.open(url, "_blank");
 
             const iframe = document.createElement("iframe");
