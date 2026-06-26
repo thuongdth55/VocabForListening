@@ -633,8 +633,10 @@ body{
     const params = new URLSearchParams(window.location.search);
     const numero = Number(params.get("no"));
     const selected_type = Number(params.get("type")) || 0;
+    const selected_group = Number(params.get("group")) || 0;
 
     let allData = []; // Biến chính lưu trữ dữ liệu
+    let allGroups = [];
     let currentIndex = 0;
     let totalItems = 0;
 
@@ -651,11 +653,27 @@ body{
                         // Ép kiểu stage về số và trim Status để so sánh an toàn
                         const w_no = Number(item['No']);
                         const w_type = Number(item['type']);
+                        const w_group = item['group'] ? Number(item['group']) : -1;
                         const w = item['word']?.toString().trim();
-                        // Dùng && (Logical AND) thay vì & (Bitwise)
-                        return w_no === numero && w_type === selected_type && !!w;
+
+                        if (selected_group === 0) {
+                            return w_no === numero &&
+                                   w_type === selected_type &&
+                                   !!w;
+                        }
+
+                        return w_no === numero &&
+                               w_type === selected_type &&
+                               !!w &&
+                               w_group === selected_group;
                 });
-   
+                
+                // Lấy tất cả group khác nhau
+                allGroups = [...new Set(
+                        allData
+                            .map(item => item.group)
+                            .filter(g => g !== undefined && g !== null && g !== "")
+                        )].sort((a, b) => Number(a) - Number(b));
                 // GIẢI PHÓNG BỘ NHỚ: Xóa kết quả gốc của PapaParse
                 results = null; 
 
@@ -701,11 +719,26 @@ body{
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
-                <select id="type-select">
-                    <option value="0">Type 0</option>
-                    <option value="1">Type 1</option>
-                    <option value="2">Type 2</option>
-                </select>
+                // <select id="type-select">
+                //     <option value="0">Type 0</option>
+                //     <option value="1">Type 1</option>
+                //     <option value="2">Type 2</option>
+                // </select>
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <select id="type-select">
+                        <option value="0">Type 0</option>
+                        <option value="1">Type 1</option>
+                        <option value="2">Type 2</option>
+                    </select>
+
+                    <select id="group-select">
+                        <option value="">All Groups</option>
+                            ${allGroups.map(g => `
+                        <option value="${g}">Group ${g}</option>
+                        `).join("")}
+                    </select>
+                </div>
+                
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
@@ -770,6 +803,26 @@ body{
 
             params.set("type", typeSelect.value);
             params.set("no", numero);
+
+            window.location.search = params.toString();
+        });
+
+        const groupSelect = document.getElementById("group-select");
+
+        // Nếu có truyền group trên URL thì chọn sẵn
+        const selectedGroup = urlParams.get("group") || "";
+        groupSelect.value = selectedGroup;
+
+        groupSelect.addEventListener("change", () => {
+            const params = new URLSearchParams(window.location.search);
+
+            params.set("type", typeSelect.value);
+            params.set("no", numero);
+
+            if (groupSelect.value)
+                params.set("group", groupSelect.value);
+            else
+                params.delete("group");
 
             window.location.search = params.toString();
         });
