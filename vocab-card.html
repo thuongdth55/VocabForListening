@@ -728,7 +728,7 @@ body{
                     </select>
 
                     <select id="group-select">
-                        <option value="">All Groups</option>
+                        <option value="0">All Groups</option>
                             ${allGroups.map(g => `
                         <option value="${g}">Group ${g}</option>
                         `).join("")}
@@ -804,22 +804,16 @@ body{
         });
 
         const groupSelect = document.getElementById("group-select");
-
-        // Nếu có truyền group trên URL thì chọn sẵn
-        const selectedGroup = urlParams.get("group") || "";
-        groupSelect.value = selectedGroup;
+        
+        groupSelect.value = selected_group;
 
         groupSelect.addEventListener("change", () => {
             const params = new URLSearchParams(window.location.search);
 
             params.set("type", typeSelect.value);
             params.set("no", numero);
-
-            if (groupSelect.value)
-                params.set("group", groupSelect.value);
-            else
-                params.delete("group");
-
+            params.set("group", groupSelect.value);
+            
             window.location.search = params.toString();
         });
 
