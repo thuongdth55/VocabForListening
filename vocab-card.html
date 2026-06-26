@@ -655,6 +655,10 @@ body{
                     const w_type = Number(item['type']);
                     const w = item['word']?.toString().trim();
 
+                    if (selected_type  === -1){
+                       return w_no === numero && !!w;
+                    }
+                        
                     return w_no === numero &&
                        w_type === selected_type &&
                        !!w;
@@ -726,6 +730,7 @@ body{
             <div class="flashcard">
                 <div style="display:flex; gap:10px; margin-bottom:10px;">
                     <select id="type-select">
+                        <option value="-1">All</option>
                         <option value="0">Type 0</option>
                         <option value="1">Type 1</option>
                         <option value="2">Type 2</option>
