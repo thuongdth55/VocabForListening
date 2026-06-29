@@ -487,7 +487,7 @@ body{
     display:flex;
 }
 
-.viewer-content{
+/* .viewer-content{
     display:flex;
     justify-content:center;
     align-items:center;
@@ -497,8 +497,19 @@ body{
 
     overflow:auto;
     touch-action:pan-x pan-y pinch-zoom;
-}
+} */
+        
+.viewer-content{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
 
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+        
 .viewer-content img{
     display:block;
 
@@ -524,6 +535,38 @@ body{
     cursor:pointer;
     background:rgba(255,255,255,.85);
     z-index:100000;
+}
+
+.viewer-img{
+
+    position:absolute;
+
+    max-width:90vw;
+    max-height:90vh;
+
+    width:auto;
+    height:auto;
+
+    object-fit:contain;
+
+    opacity:0;
+
+    transform:translate3d(100%,0,0);
+
+    transition:
+        transform .28s cubic-bezier(.22,.61,.36,1),
+        opacity .28s ease;
+
+    will-change:transform,opacity;
+}
+
+.viewer-img.active{
+
+    opacity:1;
+
+    transform:translate3d(0,0,0);
+
+    z-index:2;
 }
 
 /* =========================
@@ -714,7 +757,8 @@ body{
 <div id="imageViewer" class="image-viewer">
     <button class="close-btn" onclick="closeImageViewer()">✕</button>
     <div class="viewer-content">
-        <img id="viewerImg">
+        <img id="viewerImgA" class="viewer-img active">
+        <img id="viewerImgB" class="viewer-img">
     </div>
 </div>
     
@@ -734,6 +778,10 @@ body{
 
     let viewerImages = [];
     let viewerIndex = 0;
+    let imgA;
+    let imgB;
+
+    let activeImg = 0;
     
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1088,15 +1136,89 @@ body{
 
     function openImageViewer(images, index){
         viewerImages = images;
+
         viewerIndex = index;
-        showViewerImage();
+
+        imgA.src = viewerImages[index];
+
+        imgA.classList.add("active");
+
+        imgB.classList.remove("active");
+
+        activeImg = 0;
+
+        showViewerImage(0);
         document.getElementById("imageViewer").classList.add("show");
     }
 
-    function showViewerImage(){
-        document.getElementById("viewerImg").src = viewerImages[viewerIndex];
+    // function showViewerImage(){
+    //     document.getElementById("viewerImg").src = viewerImages[viewerIndex];
+    // }
+
+   function showViewerImage(direction = 0){
+
+    const current = activeImg === 0 ? imgA : imgB;
+    const next    = activeImg === 0 ? imgB : imgA;
+
+    next.src = viewerImages[viewerIndex];
+
+    // reset trạng thái
+    next.style.transition = "none";
+    current.style.transition = "none";
+
+    if(direction === 0){
+
+        // Mở viewer lần đầu (không animation)
+
+        next.style.opacity = "1";
+        next.style.transform = "translate3d(0,0,0)";
+        next.style.zIndex = "2";
+
+        current.style.opacity = "0";
+        current.style.zIndex = "1";
+
+        activeImg ^= 1;
+
+        return;
     }
 
+    //------------------------------------------------
+    // Chuẩn bị animation
+    //------------------------------------------------
+
+    next.style.opacity = "1";
+    next.style.zIndex = "2";
+
+    current.style.opacity = "1";
+    current.style.zIndex = "1";
+
+    next.style.transform =
+        direction > 0
+            ? "translate3d(35%,0,0)"
+            : "translate3d(-35%,0,0)";
+
+    requestAnimationFrame(()=>{
+
+        next.style.transition =
+            "transform .28s cubic-bezier(.22,.61,.36,1), opacity .28s";
+
+        current.style.transition =
+            "transform .28s cubic-bezier(.22,.61,.36,1), opacity .28s";
+
+        next.style.transform =
+            "translate3d(0,0,0)";
+
+        current.style.transform =
+            direction > 0
+                ? "translate3d(-35%,0,0)"
+                : "translate3d(35%,0,0)";
+
+        current.style.opacity = "0";
+
+    });
+
+    activeImg ^= 1;
+}
     // function openImageViewer(src){
     //     document.getElementById("viewerImg").src = src;
     //     document.getElementById("imageViewer").classList.add("show");
@@ -1121,6 +1243,8 @@ body{
 let startX = 0;
 
 const viewer = document.getElementById("imageViewer");
+imgA = document.getElementById("viewerImgA");
+imgB = document.getElementById("viewerImgB");  
 viewer.addEventListener("touchstart", e=>{
     startX = e.touches[0].clientX;
 });
@@ -1131,15 +1255,36 @@ viewer.addEventListener("touchend", e=>{
 
     if(Math.abs(dx) < 50) return;
 
-    if(dx < 0){
-        // vuốt sang trái -> ảnh tiếp theo
-        viewerIndex = (viewerIndex + 1) % viewerImages.length;
-    }else{
-        // vuốt sang phải -> ảnh trước
-        viewerIndex = (viewerIndex - 1 + viewerImages.length) % viewerImages.length;
+    // if(dx < 0){
+    //     // vuốt sang trái -> ảnh tiếp theo
+    //     viewerIndex = (viewerIndex + 1) % viewerImages.length;
+    // }else{
+    //     // vuốt sang phải -> ảnh trước
+    //     viewerIndex = (viewerIndex - 1 + viewerImages.length) % viewerImages.length;
+    // }
+
+    // showViewerImage();
+    if (dx < 0) {
+
+        // Vuốt sang trái -> ảnh tiếp theo
+        viewerIndex++;
+
+        if (viewerIndex >= viewerImages.length)
+            viewerIndex = 0;
+
+        showViewerImage(1);
+
+    } else {
+
+        // Vuốt sang phải -> ảnh trước
+        viewerIndex--;
+
+        if (viewerIndex < 0)
+            viewerIndex = viewerImages.length - 1;
+
+        showViewerImage(-1);
     }
 
-    showViewerImage();
 });
     
 function fitBigChar(){
