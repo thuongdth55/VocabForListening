@@ -445,6 +445,7 @@ body{
    vocabulary illustrations
 ========================= */
 .image-strip{
+    overflow:hidden;
     display:flex;
     gap:8px;
     overflow-x:auto;
@@ -469,6 +470,38 @@ body{
     object-fit:cover;
     border-radius:8px;
     scroll-snap-align:start;
+}
+
+.image-track{
+    display:flex;
+    gap:8px;
+    width:max-content;
+
+    animation:filmScroll 35s linear infinite;
+}
+
+.image-track:hover{
+    animation-play-state:paused;
+}
+
+.image-track img{
+    width:110px;
+    height:110px;
+    object-fit:cover;
+    border-radius:8px;
+    flex-shrink:0;
+}
+
+@keyframes filmScroll{
+
+    from{
+        transform:translateX(0);
+    }
+
+    to{
+        transform:translateX(calc(-50%));
+    }
+
 }
 
 .image-viewer{
@@ -901,11 +934,13 @@ body{
                 ${
                     images.length ? `
                         <div class="image-strip">
-                            ${images.map((url, index) => `
-                            <img src="${url}"
-                                 loading="lazy"
-                                 onclick="openImageViewer(viewerImages, ${index})">
-                            `).join("")}
+                            <div class="image-track">
+                                ${[...images, ...images].map((url, index) => `
+                                <img src="${url}"
+                                     loading="lazy"
+                                     onclick="openImageViewer(viewerImages, ${index % images.length})">
+                                `).join("")}
+                            </div>
                     </div>
                     ` : ""
                 }
