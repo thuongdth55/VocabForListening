@@ -749,7 +749,19 @@ body{
                         <span style="color:green; font-weight:bold;">${index + 1}</span> / ${groupCount}
                     </div>
                 </div>
-                
+
+                ${
+                    item['image1'] ? `
+                    <div class="image-grid">
+                        ${[1,2,3,4,5,6].map(i =>
+                            item[`image${i}`]
+                                ? `<img src="${item[`image${i}`]}" loading="lazy">`
+                                : ""
+                        ).join("")}
+                    </div>
+                    ` : ""
+                }
+        
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
