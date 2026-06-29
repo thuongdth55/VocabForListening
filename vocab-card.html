@@ -725,6 +725,9 @@ body{
     let currentIndex = 0;
     let totalItems = 0;
 
+    let viewerImages = [];
+    let viewerIndex = 0;
+    
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
         Papa.parse(sheetUrl, {
@@ -799,7 +802,7 @@ body{
         
         // Reset vị trí cuộn lên đầu card mới
         book.scrollTop = 0;
-
+        
         const examplesHtml = generateVocabHtml(item['examples']);
 
         const currentType = String(item["type"]);
@@ -811,6 +814,12 @@ body{
 
         let groupCount = allData.length;
 
+        const images = [1,2,3,4,5,6]
+            .map(i => item[`image${i}`])
+            .filter(Boolean);
+
+        viewerImages = images;
+        
         // Ghi đè toàn bộ nội dung cũ (Xóa card cũ khỏi DOM)
         book.innerHTML = `
             <div class="flashcard">
@@ -835,19 +844,17 @@ body{
                 </div>
 
                 ${
-                    item['image1'] ? `
-                    <div class="image-strip">
-                        ${[1,2,3,4,5,6].map(i =>
-                            item[`image${i}`]
-                                ? `<img src="${item[`image${i}`]}" loading="lazy" 
-                                ondblclick="openImageViewer(this.src)" 
-                                onclick="handleImageTap(event, this)">`
-                                : ""
-                        ).join("")}
+                    images.length ? `
+                        <div class="image-strip">
+                            ${images.map((url, index) => `
+                            <img src="${url}"
+                                 loading="lazy"
+                                 onclick="openImageViewer(viewerImages, ${index})">
+                            `).join("")}
                     </div>
                     ` : ""
                 }
-        
+                
                 <div class="header-section" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
@@ -1072,10 +1079,21 @@ body{
         `).join('');
     }
 
-    function openImageViewer(src){
-        document.getElementById("viewerImg").src = src;
+    function openImageViewer(images, index){
+        viewerImages = images;
+        viewerIndex = index;
+        showViewerImage();
         document.getElementById("imageViewer").classList.add("show");
     }
+
+    function showViewerImage(){
+        document.getElementById("viewerImg").src = viewerImages[viewerIndex];
+    }
+
+    // function openImageViewer(src){
+    //     document.getElementById("viewerImg").src = src;
+    //     document.getElementById("imageViewer").classList.add("show");
+    // }
 
     function closeImageViewer(){
         document.getElementById("imageViewer").classList.remove("show");
@@ -1093,6 +1111,30 @@ body{
 
         // lastTap = now;
     }    
+let startX = 0;
+
+const viewer = document.getElementById("imageViewer");
+
+viewer.addEventListener("touchstart", e=>{
+    startX = e.touches[0].clientX;
+});
+
+viewer.addEventListener("touchend", e=>{
+
+    const dx = e.changedTouches[0].clientX - startX;
+
+    if(Math.abs(dx) < 50) return;
+
+    if(dx < 0){
+        // vuốt sang trái -> ảnh tiếp theo
+        viewerIndex = (viewerIndex + 1) % viewerImages.length;
+    }else{
+        // vuốt sang phải -> ảnh trước
+        viewerIndex = (viewerIndex - 1 + viewerImages.length) % viewerImages.length;
+    }
+
+    showViewerImage();
+});
     
 function fitBigChar(){
 
