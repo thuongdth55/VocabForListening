@@ -710,6 +710,13 @@ body{
     <div id="pageDots" class="dots"></div>
     <button class="nav-btn" onpointerdown="nextPage()">→</button>
 </div>
+
+<div id="imageViewer" class="image-viewer">
+    <button class="close-btn" onclick="closeImageViewer()">✕</button>
+    <div class="viewer-content">
+        <img id="viewerImg">
+    </div>
+</div>
     
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn1zBA3uJNHwy2J26AduUPdSPsT7JT7yP1oruiCRNp2C_dJwAHmMV-wl1unwHogdBk3LICU_k1hJrk/pub?gid=1728781649&single=true&output=csv';
@@ -1185,11 +1192,5 @@ function fitBigChar(){
     init();
 </script>
     
-<div id="imageViewer" class="image-viewer">
-    <button class="close-btn" onclick="closeImageViewer()">✕</button>
-    <div class="viewer-content">
-        <img id="viewerImg">
-    </div>
-</div>
 </body>
 </html>
