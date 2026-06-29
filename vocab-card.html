@@ -474,7 +474,9 @@ body{
 .image-viewer{
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.92);
+    background:rgba(0,0,0,.25);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
     display:none;
     justify-content:center;
     align-items:center;
@@ -486,18 +488,28 @@ body{
 }
 
 .viewer-content{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
     width:100%;
     height:100%;
+
     overflow:auto;
-    text-align:center;
     touch-action:pan-x pan-y pinch-zoom;
 }
 
 .viewer-content img{
-    max-width:100%;
-    max-height:100%;
-    margin:auto;
     display:block;
+
+    max-width:90vw;
+    max-height:90vh;
+
+    width:auto;
+    height:auto;
+
+    border-radius:10px;
+    box-shadow:0 8px 30px rgba(0,0,0,.45);
 }
 
 .close-btn{
