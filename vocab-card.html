@@ -525,16 +525,7 @@ body{
     background:rgba(255,255,255,.85);
     z-index:100000;
 }
-#viewerImg{
-    max-width:90vw;
-    max-height:90vh;
-    transition:opacity .18s ease, transform .18s ease;
-}
 
-#viewerImg.animating{
-    opacity:0;
-    transform:scale(.96);
-} 
 /* =========================
    NAV
 ========================= */
@@ -1103,15 +1094,7 @@ body{
     }
 
     function showViewerImage(){
-        // document.getElementById("viewerImg").src = viewerImages[viewerIndex];
-        const img = document.getElementById("viewerImg");
-
-        img.classList.add("animating");
-
-        setTimeout(() => {
-            img.src = viewerImages[viewerIndex];
-            img.classList.remove("animating");
-        }, 180);
+        document.getElementById("viewerImg").src = viewerImages[viewerIndex];
     }
 
     // function openImageViewer(src){
