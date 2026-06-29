@@ -470,6 +470,7 @@ body{
     object-fit:cover;
     border-radius:8px;
     scroll-snap-align:start;
+    transition:transform .35s ease;
 }
 
 .image-track{
@@ -933,14 +934,12 @@ body{
 
                 ${
                     images.length ? `
-                        <div class="image-strip">
-                            <div class="image-track">
-                                ${[...images, ...images].map((url, index) => `
-                                <img src="${url}"
-                                     loading="lazy"
-                                     onclick="openImageViewer(viewerImages, ${index % images.length})">
-                                `).join("")}
-                            </div>
+                        <div class="image-strip auto-strip">
+                            ${images.map((url, index) => `
+                            <img src="${url}"
+                                 loading="lazy"
+                                 onclick="openImageViewer(viewerImages, ${index})">
+                            `).join("")}
                     </div>
                     ` : ""
                 }
@@ -996,9 +995,39 @@ body{
         `;
         speak_en(item['word']);
         fitBigChar();
-
+    
         window.addEventListener("resize",fitBigChar);
 
+        const strip = book.querySelector(".auto-strip");
+
+       if (strip) {
+
+    setInterval(() => {
+
+        const first = strip.firstElementChild;
+
+        first.style.transform = "translateX(-30px)";
+        first.style.opacity = "0";
+
+        setTimeout(() => {
+
+            first.style.transition = "none";
+            first.style.transform = "";
+            first.style.opacity = "";
+
+            strip.appendChild(first);
+
+            // ép browser render
+            first.offsetHeight;
+
+            first.style.transition = "";
+
+        }, 350);
+
+    }, 1500);
+
+}
+        
         const typeSelect = document.getElementById("type-select");
 
         typeSelect.value = selected_type;
@@ -1263,6 +1292,7 @@ body{
         document.getElementById("imageViewer").classList.remove("show");
     }
 
+    
     // let lastTap = 0;
 
     function handleImageTap(e, img){
