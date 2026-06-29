@@ -442,6 +442,33 @@ body{
     font-weight:700;
 }
 
+.image-strip{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    margin-bottom:10px;
+    padding-bottom:4px;
+
+    scroll-snap-type:x proximity;
+
+    /* Ẩn thanh cuộn */
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+}
+
+.image-strip::-webkit-scrollbar{
+    display:none;
+}
+
+.image-strip img{
+    flex:0 0 auto;
+    width:100px;
+    height:100px;
+    object-fit:cover;
+    border-radius:8px;
+    scroll-snap-align:start;
+}
+        
 /* =========================
    NAV
 ========================= */
@@ -752,7 +779,7 @@ body{
 
                 ${
                     item['image1'] ? `
-                    <div class="image-grid">
+                    <div class="image-strip">
                         ${[1,2,3,4,5,6].map(i =>
                             item[`image${i}`]
                                 ? `<img src="${item[`image${i}`]}" loading="lazy">`
