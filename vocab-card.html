@@ -827,6 +827,7 @@ body{
     const numero = Number(params.get("no"));
     const selected_type = Number(params.get("type")) || 0;
     const selected_group = Number(params.get("group")) || 0;
+    const is_practice = Number(params.get("practice")) || 0;
 
     let allData = []; // Biến chính lưu trữ dữ liệu
     let allGroups = [];
@@ -849,7 +850,8 @@ body{
             complete: function(results) {
                 // Lọc dữ liệu
                 // Lọc theo No + Type trước
-                const baseData = results.data.filter(item => {
+                if (is_practice === 0){
+                    const baseData = results.data.filter(item => {
                     const w_no = Number(item['No']);
                     const w_type = Number(item['type']);
                     const w = item['word']?.toString().trim();
@@ -861,25 +863,34 @@ body{
                     return w_no === numero &&
                        w_type === selected_type &&
                        !!w;
-                });
-
-                // Lấy tất cả group khác nhau
-                allGroups = [...new Set(
-                    baseData
-                        .map(item => item['group'])
-                        .filter(g => g !== undefined && g !== null && g !== "")
-                        .map(g => Number(g))
-                    )].sort((a, b) => a - b);
-
-                // Lọc tiếp theo group
-                // Nếu chọn All Groups thì giữ nguyên
-                if (selected_group === 0) {
-                    allData = baseData;
-                } else {
-                    allData = baseData.filter(item => {
-                        const w_group = item['group'] ? Number(item['group']) : -1;
-                        return w_group === selected_group;
                     });
+
+                    // Lấy tất cả group khác nhau
+                    allGroups = [...new Set(
+                        baseData
+                            .map(item => item['group'])
+                            .filter(g => g !== undefined && g !== null && g !== "")
+                            .map(g => Number(g))
+                        )].sort((a, b) => a - b);
+
+                    // Lọc tiếp theo group
+                    // Nếu chọn All Groups thì giữ nguyên
+                    if (selected_group === 0) {
+                        allData = baseData;
+                    } else {
+                        allData = baseData.filter(item => {
+                            const w_group = item['group'] ? Number(item['group']) : -1;
+                            return w_group === selected_group;
+                        });
+                    }
+                } else {
+                    allData = results.data.filter(item => {
+                            const w_is_chosen = Number(item['is_chosen']);
+                            const w = item['word']?.toString().trim();
+                            return w_is_chosen === 1 && !!w;
+                    });
+                    // Không dùng group trong chế độ practice
+                    allGroups = [];
                 }
                 
                 // GIẢI PHÓNG BỘ NHỚ: Xóa kết quả gốc của PapaParse
@@ -953,8 +964,8 @@ body{
                     <div style="margin:2px 0; font-size:13px; color:#666; text-align:left;">
                         <span style="color:green; font-weight:bold;">${index + 1}</span> / ${groupCount}
                     </div>
-                    <button id="add-forgetting-curve-btn" class="action-btn">
-                        Luyện tậptập<br>đường cong quên lãng
+                    <button id="practice-forgetting-curve-btn" class="action-btn">
+                        SeeSay
                     </button>
                 </div>
 
@@ -1118,6 +1129,13 @@ body{
 
              alert("Đã thêm vào đường cong quên lãng");
          });
+
+        const practiceBtn = document.getElementById("practice-forgetting-curve-btn")
+        practiceBtn.addEventListener("click", () => {
+            const params = new URLSearchParams(window.location.search);
+            params.set("practice", 1);
+            window.location.search = params.toString();
+        });
         updateDots();
     }
     
