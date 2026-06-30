@@ -441,6 +441,21 @@ body{
     color: #f7f1e8;
     font-weight:700;
 }
+
+#add-forgetting-curve-btn {
+    margin-left: 8px;
+    padding: 6px 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#add-forgetting-curve-btn:hover {
+    background: #0069d9;
+}
 /* =========================
    vocabulary illustrations
 ========================= */
@@ -992,6 +1007,9 @@ body{
                     `<option value="${t}">Type ${t}</option>`
                     ).join("")}
                 </select>
+                <button id="add-forgetting-curve-btn" class="action-btn">
+                    Thêm vào đường cong quên lãng
+                </button>
             </div>
         `;
         speak_en(item['word']);
@@ -1062,7 +1080,32 @@ body{
 
             alert("Đã cập nhật");
         });
-   
+
+        const addBtn = document.getElementById("add-forgetting-curve-btn");
+
+        addBtn.addEventListener("click", () => {
+            const index_row = Number(item['stt']) + 1;
+
+            // Lấy ngày hiện tại theo format dd/MM/yyyy
+            const today = new Date();
+            const start_date =
+                String(today.getDate()).padStart(2, "0") + "/" +
+                String(today.getMonth() + 1).padStart(2, "0") + "/" +
+                today.getFullYear();
+
+             const url =
+                "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
+                `?row=${index_row}&start_date=${encodeURIComponent(start_date)}`;
+
+             const iframe = document.createElement("iframe");
+             iframe.style.display = "none";
+             iframe.src = url;
+             document.body.appendChild(iframe);
+
+             item.start_date = start_date;
+
+             alert("Đã thêm vào đường cong quên lãng");
+         });
         updateDots();
     }
     
