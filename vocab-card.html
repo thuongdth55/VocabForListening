@@ -442,19 +442,28 @@ body{
     font-weight:700;
 }
 
-#add-forgetting-curve-btn {
-    margin-left: 8px;
-    padding: 6px 12px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
+.action-btn {
+    width: fit-content;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: #efe4d4;
+    color: var(--text);
+    font-size: 15px;
     cursor: pointer;
-    font-size: 14px;
+    outline: none;
+    font-family:
+        "Georgia",
+        "Times New Roman",
+        serif;
 }
 
-#add-forgetting-curve-btn:hover {
-    background: #0069d9;
+.action-btn:hover {
+    filter: brightness(0.98);
+}
+
+.action-btn:active {
+    transform: translateY(1px);
 }
 /* =========================
    vocabulary illustrations
