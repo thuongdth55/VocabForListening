@@ -1082,10 +1082,41 @@ body{
         const select = document.getElementById("change-type-select");
 
         select.addEventListener("change", async () => {
-
             const newType = select.value;
 
             if (!newType) return;
+            sendActionType(item, newType);
+
+        });
+
+        const addBtn = document.getElementById("add-forgetting-curve-btn");
+
+        addBtn.addEventListener("click", () => {
+            sendAction(item, "add_startdate", "Đã thêm vào đường cong quên lãng");
+         });
+
+        const practiceBtn = document.getElementById("practice-forgetting-curve-btn")
+        practiceBtn.addEventListener("click", () => {
+            const params = new URLSearchParams(window.location.search);
+            params.set("practice", 1);
+            window.location.search = params.toString();
+        });
+
+        const doneBtn = document.getElementById("tick-done-btn");
+        doneBtn.addEventListener("click", () => {
+            sendAction(item, "update_learned_date", "Đã học từ này");
+            const w_count_dates = Number(item['count_dates']);
+            let new_type = 1;
+            if (w_count_dates > 8) {
+                new_type = 2;
+            }
+            sendActionType(item, newType);
+         });
+        
+        updateDots();
+    }
+
+    function sendActionType(item, newType){
             const index_row = Number(item['stt'])+1
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
           `?action=update_type&row=${index_row}&type=${newType}`;
@@ -1105,29 +1136,7 @@ body{
             item.type = newType;
 
             alert("Đã cập nhật");
-        });
-
-        const addBtn = document.getElementById("add-forgetting-curve-btn");
-
-        addBtn.addEventListener("click", () => {
-            sendAction(item, "add_startdate", "Đã thêm vào đường cong quên lãng")
-         });
-
-        const practiceBtn = document.getElementById("practice-forgetting-curve-btn")
-        practiceBtn.addEventListener("click", () => {
-            const params = new URLSearchParams(window.location.search);
-            params.set("practice", 1);
-            window.location.search = params.toString();
-        });
-
-        const doneBtn = document.getElementById("tick-done-btn");
-        doneBtn.addEventListener("click", () => {
-            sendAction(item, "update_learned_date", "Đã học từ này")
-         });
-        
-        updateDots();
     }
-
     function sendAction(item, action, message) {
         const index_row = Number(item.stt) + 1;
         // Lấy ngày hiện tại theo format dd/MM/yyyy
