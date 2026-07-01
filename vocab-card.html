@@ -1106,9 +1106,9 @@ body{
         doneBtn.addEventListener("click", () => {
             sendAction(item, "update_learned_date", "Đã học từ này");
             const w_count_dates = Number(item['count_dates']);
-            let new_type = 1;
+            let newType = 1;
             if (w_count_dates > 8) {
-                new_type = 2;
+                newType = 2;
             }
             sendActionType(item, newType);
          });
