@@ -1085,7 +1085,7 @@ body{
             const newType = select.value;
 
             if (!newType) return;
-            sendActionType(item, newType);
+            sendActionType(item, newType, true);
 
         });
 
@@ -1110,13 +1110,13 @@ body{
             if (w_count_dates > 8) {
                 newType = 2;
             }
-            sendActionType(item, newType);
+            sendActionType(item, newType, false);
          });
         
         updateDots();
     }
 
-    function sendActionType(item, newType){
+    function sendActionType(item, newType, has_message){
             const index_row = Number(item['stt'])+1
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
           `?action=update_type&row=${index_row}&type=${newType}`;
@@ -1135,7 +1135,9 @@ body{
 
             item.type = newType;
 
-            alert("Đã cập nhật");
+            if (has_message === true){
+                alert("Đã cập nhật");
+            }
     }
     function sendAction(item, action, message) {
         const index_row = Number(item.stt) + 1;
