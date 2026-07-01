@@ -1033,6 +1033,9 @@ body{
                 <button id="add-forgetting-curve-btn" class="action-btn">
                     Thêm vào<br>đường cong quên lãng
                 </button>
+                <button id="tick-done-btn" class="action-btn">
+                    Tick đã học
+                </button>
             </div>
         `;
         speak_en(item['word']);
@@ -1085,7 +1088,7 @@ body{
             if (!newType) return;
             const index_row = Number(item['stt'])+1
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
-          `?row=${index_row}&type=${newType}`;
+          `?action=update_type&row=${index_row}&type=${newType}`;
 
             // console.log(index_row);
             // console.log(newType);
@@ -1107,27 +1110,7 @@ body{
         const addBtn = document.getElementById("add-forgetting-curve-btn");
 
         addBtn.addEventListener("click", () => {
-            const index_row = Number(item['stt']) + 1;
-
-            // Lấy ngày hiện tại theo format dd/MM/yyyy
-            const today = new Date();
-            const start_date =
-                String(today.getDate()).padStart(2, "0") + "/" +
-                String(today.getMonth() + 1).padStart(2, "0") + "/" +
-                today.getFullYear();
-
-             const url =
-                "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
-                `?row=${index_row}&start_date=${encodeURIComponent(start_date)}`;
-
-             const iframe = document.createElement("iframe");
-             iframe.style.display = "none";
-             iframe.src = url;
-             document.body.appendChild(iframe);
-
-             item.start_date = start_date;
-
-             alert("Đã thêm vào đường cong quên lãng");
+            sendAction(item, "add_startdate", "Đã thêm vào đường cong quên lãng")
          });
 
         const practiceBtn = document.getElementById("practice-forgetting-curve-btn")
@@ -1136,7 +1119,36 @@ body{
             params.set("practice", 1);
             window.location.search = params.toString();
         });
+
+        const doneBtn = document.getElementById("tick-done-btn");
+        doneBtn.addEventListener("click", () => {
+            sendAction(item, "update_learned_date", "Đã học từ này")
+         });
+        
         updateDots();
+    }
+
+    function sendAction(item, action, message) {
+        const index_row = Number(item.stt) + 1;
+        // Lấy ngày hiện tại theo format dd/MM/yyyy
+        const today = new Date();
+        const start_date =
+                String(today.getDate()).padStart(2, "0") + "/" +
+                String(today.getMonth() + 1).padStart(2, "0") + "/" +
+                today.getFullYear();
+        
+        const url =
+                "https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
+                `?action=${action}&row=${index_row}&date=${encodeURIComponent(today)}`;
+
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = url;
+        document.body.appendChild(iframe);
+
+        item.start_date = today;
+
+        alert(message);
     }
     
     function nextPage() {
