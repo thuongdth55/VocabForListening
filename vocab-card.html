@@ -858,10 +858,6 @@ body{
     let activeImg = 0;
     let recognition = null;
     let isRecording = false;
-
-    let currentTranscript = "";
-    let currentTextarea = null;
-    let currentButton = null;
     
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1279,7 +1275,8 @@ body{
         }
     
         return list.map(v => `
-            <div class="ext-vocab-item" onclick="event.stopPropagation(); speak_en('${v.en.replace(/'/g, "\\'")}')">
+            <div class="ext-vocab-item" data-recording="0"
+                    onclick="event.stopPropagation(); speak_en('${v.en.replace(/'/g, "\\'")}')">
                 <div class="ext-en">${v.en}</div>
                 <div class="ext-ipa">${v.ipa}</div>
                 <div class="ext-vi">${v.vi}</div>
@@ -1304,77 +1301,77 @@ body{
         `).join('');
     }
 
-function toggleRecord(btn) {
+const recognitionMap = new WeakMap();
 
-    if (!('webkitSpeechRecognition' in window) &&
-        !('SpeechRecognition' in window)) {
-        alert("Trình duyệt không hỗ trợ Speech Recognition");
+function toggleRecord(btn){
+
+    const item = btn.closest(".ext-vocab-item");
+
+    const recording = item.dataset.recording === "1";
+
+    if(recording){
+        recognitionMap.get(item)?.stop();
         return;
     }
 
-    if (!isRecording) {
+    const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
 
-        const SpeechRecognition =
-            window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
 
-        recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = true;
-        recognition.continuous = true;
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = true;
 
-        currentTranscript = "";
-        currentTextarea = btn.closest(".ext-vocab-item")
-                             .querySelector(".speech-result");
-        currentButton = btn;
+    recognitionMap.set(item, recognition);
 
-        currentTextarea.style.display = "none";
-        currentTextarea.value = "";
+    item.dataset.recording = "1";
+    btn.textContent = "⏹ Stop";
 
-        recognition.onresult = (event) => {
-            let text = "";
+    const textarea = item.querySelector(".speech-result");
+    textarea.style.display = "none";
+    textarea.value = "";
 
-            for (let i = 0; i < event.results.length; i++) {
-                text += event.results[i][0].transcript + " ";
-            }
+    let transcript = "";
 
-            currentTranscript = text.trim();
-        };
+    recognition.onresult = e => {
 
-        recognition.onend = () => {
+        transcript = "";
 
-            isRecording = false;
+        for(let i=0;i<e.results.length;i++){
+            transcript += e.results[i][0].transcript + " ";
+        }
 
-            currentButton.textContent = "🎤 Record";
+    };
 
-            currentTextarea.value = currentTranscript;
-            currentTextarea.style.display = "block";
-        };
+    recognition.onend = ()=>{
 
-        recognition.start();
+        item.dataset.recording = "0";
+        btn.textContent = "🎤 Record";
 
-        isRecording = true;
-        btn.textContent = "⏹ Stop";
+        textarea.value = transcript.trim();
+        textarea.style.display = "block";
+    };
 
-    } else {
-
-        recognition.stop();
-    }
+    recognition.start();
 }
 
-function playRecorded(btn) {
+function playRecorded(btn){
 
-    const textarea = btn.closest(".ext-vocab-item")
-                        .querySelector(".speech-result");
+    const text = btn.closest(".ext-vocab-item")
+                    .querySelector(".speech-result")
+                    .value.trim();
 
-    if (!textarea.value.trim()) return;
+    if(!text) return;
 
     speechSynthesis.cancel();
 
-    const utter = new SpeechSynthesisUtterance(textarea.value);
-    utter.lang = "en-US";
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
 
-    speechSynthesis.speak(utter);
+    speechSynthesis.speak(u);
 }
+    
     function openImageViewer(images, index){
         viewerImages = images;
 
