@@ -1086,14 +1086,27 @@ body{
                     ` : ""
                 }
                 
-                <div class="header-section" onclick="speak_en('${item['word']}')">
+                <div class="header-section" data-recording="0" onclick="speak_en('${item['word']}')">
                     <h1 class="big-char">${item['word'] || '？'}</h1>
                     <div class="info-top">
-                        <div class="ipa-box">
+                        <div class="ipa-box" onclick="event.stopPropagation(); showRecorder(this)">
                             <span class="ipa-tag">IPA</span>
                             <span class="ipa-text">${item['ipa'] || ''}</span>
                         </div>
                     </div>
+
+                    <div class="ext-actions" style="display:none">
+                        <button class="record-btn"
+                            onclick="event.stopPropagation(); toggleRecord(this)">
+                            🎤 Record
+                        </button>
+
+                        <button class="speak-btn"
+                            onclick="event.stopPropagation(); playRecorded(this)">
+                            🔊 Speak
+                        </button>
+                    </div>
+                    <textarea class="speech-result" readonly></textarea>
                 </div>
 
                 <div class="meaning">
@@ -1182,6 +1195,7 @@ body{
         //     }))
         // );
 
+        
         const select = document.getElementById("change-type-select");
 
         select.addEventListener("change", async () => {
@@ -1219,6 +1233,14 @@ body{
         updateDots();
     }
 
+    function showRecorder(el){
+        const actions = el.closest(".header-section")
+                      .querySelector(".ext-actions");
+
+        actions.style.display =
+            actions.style.display === "flex" ? "none" : "flex";
+    }
+    
     function sendActionType(item, newType, has_message){
             const index_row = Number(item['stt'])+1
             const url ="https://script.google.com/macros/s/AKfycbxx6QI_5UZc5evIIPc2wTTFmWfLJBAl6dFurJNJ4oRT/exec" +
