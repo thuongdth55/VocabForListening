@@ -1234,11 +1234,17 @@ body{
     }
 
     function showRecorder(el){
-        const actions = el.closest(".header-section")
-                      .querySelector(".ext-actions");
+        const header = el.closest(".header-section");
 
-        actions.style.display =
-            actions.style.display === "flex" ? "none" : "flex";
+        const actions = header.querySelector(".ext-actions");
+        const textarea = header.querySelector(".speech-result");
+
+        if (actions.style.display === "flex") {
+            actions.style.display = "none";
+            textarea.style.display = "none";
+        } else {
+            actions.style.display = "flex";
+        }
     }
     
     function sendActionType(item, newType, has_message){
