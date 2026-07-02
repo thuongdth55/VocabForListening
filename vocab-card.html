@@ -743,23 +743,108 @@ body{
 
     z-index:10000;
 }
-
+/* =========================
+   SPEECH - RECORD
+========================= */
 .ext-actions{
-    margin-top:8px;
     display:flex;
-    gap:8px;
+    gap:10px;
+    margin-top:14px;
+}
+        
+.ext-actions button{
+
+    flex:1;
+
+    padding:10px 14px;
+
+    border:1px solid var(--border);
+    border-radius:14px;
+
+    background:linear-gradient(
+        to bottom,
+        #f4ebde,
+        var(--card)
+    );
+
+    color:var(--text);
+
+    font-family:inherit;
+    font-size:15px;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
 }
 
-.record-btn,
-.speak-btn{
-    cursor:pointer;
+.ext-actions button:hover{
+
+    background:var(--hover);
+
+    transform:translateY(-1px);
+
+    box-shadow:0 3px 8px rgba(0,0,0,.08);
+
+}
+
+.ext-actions button:active{
+
+    transform:translateY(0);
+
+}
+
+.record-btn.recording{
+
+    background:linear-gradient(
+        to bottom,
+        #d97878,
+        #bf5d5d
+    );
+
+    color:white;
+
+    border-color:#b24d4d;
+
 }
 
 .speech-result{
+
+    display:none;
+
+    margin-top:12px;
+
+    width:100%;
+
+    min-height:70px;
+
+    padding:12px;
+
+    box-sizing:border-box;
+
     resize:vertical;
-    min-height:60px;
+
+    border:1px solid var(--border);
+    border-radius:14px;
+
+    background:#f7f1e8;
+
+    color:var(--text);
+
+    font-family:inherit;
+    font-size:15px;
+
+    outline:none;
+
 }
 
+.speech-result:focus{
+
+    border-color:var(--gold);
+
+    box-shadow:0 0 0 3px rgba(138,107,79,.12);
+
+}
 /* =========================
    MOBILE
 ========================= */
@@ -1293,9 +1378,7 @@ body{
                     </button>
                 </div>
 
-                <textarea class="speech-result"
-                      style="display:none;width:100%;margin-top:8px;"
-                      readonly></textarea>
+                <textarea class="speech-result" readonly></textarea>
               
             </div>
         `).join('');
@@ -1327,6 +1410,7 @@ function toggleRecord(btn){
 
     item.dataset.recording = "1";
     btn.textContent = "⏹ Stop";
+    btn.classList.add("recording");
 
     const textarea = item.querySelector(".speech-result");
     textarea.style.display = "none";
@@ -1348,7 +1432,7 @@ function toggleRecord(btn){
 
         item.dataset.recording = "0";
         btn.textContent = "🎤 Record";
-
+        btn.classList.remove("recording");
         textarea.value = transcript.trim();
         textarea.style.display = "block";
     };
