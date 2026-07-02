@@ -1463,11 +1463,18 @@ function toggleRecord(btn){
 }
 
 function playRecorded(btn){
+    // const text = btn.closest(".ext-vocab-item")
+    //                 .querySelector(".speech-result")
+    //                 .value.trim();
 
-    const text = btn.closest(".ext-vocab-item")
-                    .querySelector(".speech-result")
-                    .value.trim();
+    const item =
+        btn.closest(".ext-vocab-item") ||
+        btn.closest(".header-section");
 
+    const text = item
+        .querySelector(".speech-result")
+        .value.trim();
+    
     if(!text) return;
 
     speechSynthesis.cancel();
