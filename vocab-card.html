@@ -1409,9 +1409,9 @@ body{
 const recognitionMap = new WeakMap();
 
 function toggleRecord(btn){
-
-    const item = btn.closest(".ext-vocab-item");
-
+    // const item = btn.closest(".ext-vocab-item");
+    // const item = btn.closest("[data-recording]");
+    const item = btn.closest(".ext-vocab-item") ||  btn.closest(".header-section");
     const recording = item.dataset.recording === "1";
 
     if(recording){
