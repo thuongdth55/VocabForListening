@@ -744,6 +744,22 @@ body{
     z-index:10000;
 }
 
+.ext-actions{
+    margin-top:8px;
+    display:flex;
+    gap:8px;
+}
+
+.record-btn,
+.speak-btn{
+    cursor:pointer;
+}
+
+.speech-result{
+    resize:vertical;
+    min-height:60px;
+}
+
 /* =========================
    MOBILE
 ========================= */
@@ -840,6 +856,12 @@ body{
     let imgB;
 
     let activeImg = 0;
+    let recognition = null;
+    let isRecording = false;
+
+    let currentTranscript = "";
+    let currentTextarea = null;
+    let currentButton = null;
     
     function init() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -1261,10 +1283,98 @@ body{
                 <div class="ext-en">${v.en}</div>
                 <div class="ext-ipa">${v.ipa}</div>
                 <div class="ext-vi">${v.vi}</div>
+
+                <div class="ext-actions">
+                    <button class="record-btn"
+                            onclick="event.stopPropagation(); toggleRecord(this)">
+                        🎤 Record
+                    </button>
+
+                    <button class="speak-btn"
+                            onclick="event.stopPropagation(); playRecorded(this)">
+                        🔊 Speak
+                    </button>
+                </div>
+
+                <textarea class="speech-result"
+                      style="display:none;width:100%;margin-top:8px;"
+                      readonly></textarea>
+              
             </div>
         `).join('');
     }
 
+function toggleRecord(btn) {
+
+    if (!('webkitSpeechRecognition' in window) &&
+        !('SpeechRecognition' in window)) {
+        alert("Trình duyệt không hỗ trợ Speech Recognition");
+        return;
+    }
+
+    if (!isRecording) {
+
+        const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = true;
+        recognition.continuous = true;
+
+        currentTranscript = "";
+        currentTextarea = btn.closest(".ext-vocab-item")
+                             .querySelector(".speech-result");
+        currentButton = btn;
+
+        currentTextarea.style.display = "none";
+        currentTextarea.value = "";
+
+        recognition.onresult = (event) => {
+            let text = "";
+
+            for (let i = 0; i < event.results.length; i++) {
+                text += event.results[i][0].transcript + " ";
+            }
+
+            currentTranscript = text.trim();
+        };
+
+        recognition.onend = () => {
+
+            isRecording = false;
+
+            currentButton.textContent = "🎤 Record";
+
+            currentTextarea.value = currentTranscript;
+            currentTextarea.style.display = "block";
+        };
+
+        recognition.start();
+
+        isRecording = true;
+        btn.textContent = "⏹ Stop";
+
+    } else {
+
+        recognition.stop();
+    }
+}
+
+function playRecorded(btn) {
+
+    const textarea = btn.closest(".ext-vocab-item")
+                        .querySelector(".speech-result");
+
+    if (!textarea.value.trim()) return;
+
+    speechSynthesis.cancel();
+
+    const utter = new SpeechSynthesisUtterance(textarea.value);
+    utter.lang = "en-US";
+
+    speechSynthesis.speak(utter);
+}
     function openImageViewer(images, index){
         viewerImages = images;
 
