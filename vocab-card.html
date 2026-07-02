@@ -1413,20 +1413,67 @@ body{
     }
 
 const recognitionMap = new WeakMap();
+const recorderMap = new WeakMap();
+const audioBlobMap = new WeakMap();
 
-function toggleRecord(btn){
-    // const item = btn.closest(".ext-vocab-item");
-    // const item = btn.closest("[data-recording]");
-    const item = btn.closest(".ext-vocab-item") ||  btn.closest(".header-section");
-    const recording = item.dataset.recording === "1";
+async function toggleRecord(btn){
 
-    if(recording){
+    const item =
+        btn.closest(".ext-vocab-item") ||
+        btn.closest(".header-section");
+
+    const textarea = item.querySelector(".speech-result");
+
+    // Đang ghi -> dừng
+    if(item.dataset.recording === "1"){
+
         recognitionMap.get(item)?.stop();
+        recorderMap.get(item)?.stop();
+
         return;
     }
 
+    // Xin quyền microphone
+    const stream = await navigator.mediaDevices.getUserMedia({
+        audio:true
+    });
+
+    // ==========================
+    // MediaRecorder
+    // ==========================
+
+    const recorder = new MediaRecorder(stream);
+
+    recorderMap.set(item, recorder);
+
+    let chunks = [];
+
+    recorder.ondataavailable = e=>{
+        if(e.data.size){
+            chunks.push(e.data);
+        }
+    };
+
+    recorder.onstop = ()=>{
+
+        const blob = new Blob(chunks,{
+            type:"audio/webm"
+        });
+
+        audioBlobMap.set(item, blob);
+
+        stream.getTracks().forEach(t=>t.stop());
+    };
+
+    recorder.start();
+
+    // ==========================
+    // SpeechRecognition
+    // ==========================
+
     const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
     const recognition = new SpeechRecognition();
 
@@ -1436,19 +1483,14 @@ function toggleRecord(btn){
 
     recognitionMap.set(item, recognition);
 
-    item.dataset.recording = "1";
-    btn.textContent = "⏹ Stop";
-    btn.classList.add("recording");
+    let transcript = "";
 
-    const textarea = item.querySelector(".speech-result");
     textarea.style.display = "none";
     textarea.value = "";
 
-    let transcript = "";
+    recognition.onresult = e=>{
 
-    recognition.onresult = e => {
-
-        transcript = "";
+        transcript="";
 
         for(let i=0;i<e.results.length;i++){
             transcript += e.results[i][0].transcript + " ";
@@ -1458,37 +1500,43 @@ function toggleRecord(btn){
 
     recognition.onend = ()=>{
 
-        item.dataset.recording = "0";
-        btn.textContent = "🎤 Record";
+        item.dataset.recording="0";
+
+        btn.textContent="🎤 Record";
         btn.classList.remove("recording");
-        textarea.value = transcript.trim();
-        textarea.style.display = "block";
+
+        textarea.value=transcript.trim();
+
+        if(transcript.trim()){
+            textarea.style.display="block";
+        }
+
     };
 
     recognition.start();
+
+    item.dataset.recording="1";
+
+    btn.textContent="⏹ Stop";
+    btn.classList.add("recording");
 }
 
 function playRecorded(btn){
-    // const text = btn.closest(".ext-vocab-item")
-    //                 .querySelector(".speech-result")
-    //                 .value.trim();
 
     const item =
         btn.closest(".ext-vocab-item") ||
         btn.closest(".header-section");
 
-    const text = item
-        .querySelector(".speech-result")
-        .value.trim();
-    
-    if(!text) return;
+    const blob = audioBlobMap.get(item);
 
-    speechSynthesis.cancel();
+    if(!blob){
+        alert("Chưa có bản ghi.");
+        return;
+    }
 
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = "en-US";
+    const audio = new Audio(URL.createObjectURL(blob));
 
-    speechSynthesis.speak(u);
+    audio.play();
 }
     
     function openImageViewer(images, index){
