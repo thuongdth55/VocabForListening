@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Voice Trainer</title>
+    <style>
+        .box { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; background: #f9f9f9; }
+        .hidden { display: none; }
+        .clickable { cursor: pointer; color: blue; text-decoration: underline; margin-right: 10px; }
+        button { margin-left: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2 id="wordTitle">Loading...</h2>
+    <div id="content"></div>
+
+    <script>
+        // 1. Dữ liệu (Thay phần này bằng fetch từ Google Sheets CSV sau)
+        const db = {
+            "apple": {
+                ipa: "/ˈæp.əl/", mean: "Quả táo",
+                sentences: [
+                    {text: "I eat an apple", ipa: "/aɪ iːt ən ˈæp.əl/", mean: "Tôi ăn một quả táo"},
+                    {text: "Apples are red", ipa: "/ˈæp.əlz ɑːr red/", mean: "Táo thì màu đỏ"},
+                    {text: "An apple a day", ipa: "/ən ˈæp.əl ə deɪ/", mean: "Mỗi ngày một quả táo"}
+                ]
+            }
+        };
+
+        const params = new URLSearchParams(window.location.search);
+        const word = params.get('word') || "apple";
+        document.getElementById('wordTitle').innerText = `Luyện tập: ${word}`;
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+
+        function createBox(content, ipa, mean) {
+            const div = document.createElement('div');
+            div.className = 'box';
+            div.innerHTML = `
+                <p><strong>${content}</strong>
+                    <button onclick="speak('${content}')">🔊 Đọc</button>
+                    <button onclick="startSTT(this)">🎤 Ghi âm</button>
+                    <span class="stt-result" style="margin-left:10px; font-style:italic;"></span>
+                </p>
+                <span class="clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">IPA</span>
+                <div class="hidden">IPA: ${ipa}</div>
+                <span class="clickable" onclick="this.nextElementSibling.classList.toggle('hidden')">Nghĩa</span>
+                <div class="hidden">Nghĩa: ${mean}</div>
+            `;
+            return div;
+        }
+
+        // Logic xử lý
+        function speak(text) {
+            const msg = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(msg);
+        }
+
+        function startSTT(btn) {
+            const resultSpan = btn.nextElementSibling;
+            resultSpan.innerText = "(Đang nghe...)";
+            recognition.start();
+            recognition.onresult = (event) => {
+                resultSpan.innerText = "-> Bạn nói: " + event.results[0][0].transcript;
+            };
+        }
+
+        // Render UI
+        const data = db[word];
+        const container = document.getElementById('content');
+        container.appendChild(createBox(word, data.ipa, data.mean));
+        data.sentences.forEach(s => {
+            container.appendChild(createBox(s.text, s.ipa, s.mean));
+        });
+    </script>
+</body>
+</html>
