@@ -1438,7 +1438,7 @@ async function toggleRecord(btn){
         // const recognition = new SpeechRecognition();
         recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = "en-US";
-        recognition.interimResults = true;
+        recognition.interimResults = false;
         recognition.continuous = false;
         recognitionMap.set(item, recognition);
         
