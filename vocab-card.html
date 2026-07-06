@@ -1415,7 +1415,12 @@ const audioBlobMap = new WeakMap();
 async function toggleRecord(btn){
     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
     const textarea = item.querySelector(".speech-result");
-
+    
+    console.log("Textarea tìm thấy:", textarea); 
+    if (!textarea) {
+        alert("Lỗi: Không tìm thấy khung textarea!");
+        return;
+    }
     if(item.dataset.recording === "1"){
         recognitionMap.get(item)?.stop();
         recorderMap.get(item)?.stop();
@@ -1487,7 +1492,7 @@ async function toggleRecord(btn){
             item.dataset.recording = "0";
             btn.textContent = "🎤 Record";
             btn.classList.remove("recording");
-            
+            console.log("transcript = ", transcript);
             textarea.value = transcript.trim();
             if(transcript.trim()){
                 textarea.classList.add("is-visible"); // Hiển thị bằng class
