@@ -1425,21 +1425,24 @@ async function toggleRecord(btn){
     }
     if(item.dataset.recording === "1"){
         recognitionMap.get(item)?.stop();
-        recorderMap.get(item)?.stop();
+        // recorderMap.get(item)?.stop();
         return;
     }
 
     try {
+        if (recognition){
+            recognition.stop();
+        }
         // 1. Xin quyền Microphone trước (chỉ 1 lần)
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
         // 2. Setup SpeechRecognition
-        // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         // const recognition = new SpeechRecognition();
-        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition = new SpeechRecognition();
         recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.continuous = true;
         recognitionMap.set(item, recognition);
         
         finalTranscript = ""; 
