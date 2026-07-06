@@ -1411,7 +1411,8 @@ const recognitionMap = new WeakMap();
 const recorderMap = new WeakMap();
 const audioBlobMap = new WeakMap();
 // const transcriptMap = new WeakMap();
-
+let finalTranscript = "";
+    
 async function toggleRecord(btn){
     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
     const textarea = item.querySelector(".speech-result");
@@ -1478,34 +1479,52 @@ async function toggleRecord(btn){
         // Dùng class thay vì display:none
         textarea.classList.remove("is-visible");
         textarea.value = "";
-        
-        let transcript = "";
+        finalTranscript = ""; 
 
         recognition.onresult = e => {
-            transcript = "";
-            for(let i=0; i < e.results.length; i++){
-                transcript += e.results[i][0].transcript + " ";
+            let interimTranscript = "";
+            for(let i = e.resultIndex; i < e.results.length; i++){
+                if(e.results[i].isFinal){
+                    finalTranscript += e.results[i][0].transcript + " ";
+                } else {
+                    interimTranscript += e.results[i][0].transcript;
+                }
             }
+            // Hiển thị ngay lập tức trong quá trình nói để bạn biết nó đang nhận diện
+            textarea.value = finalTranscript + interimTranscript;
+            textarea.classList.add("is-visible");
         };
 
         recognition.onend = () => {
             item.dataset.recording = "0";
             btn.textContent = "🎤 Record";
             btn.classList.remove("recording");
-            console.log("transcript = ", transcript);
-            textarea.value = transcript.trim();
-            if(transcript.trim()){
-                textarea.classList.add("is-visible"); // Hiển thị bằng class
-            }
+        
+            // Đảm bảo textarea hiện kết quả cuối cùng
+            textarea.value = finalTranscript.trim();
+            console.log("Transcript cuối cùng:", finalTranscript);
         };
 
-        // Delay 200ms để mobile xử lý ổn định hơn
-        setTimeout(() => {
-            recognition.start();
-            item.dataset.recording = "1";
-            btn.textContent = "⏹ Stop";
-            btn.classList.add("recording");
-        }, 200);
+        recognition.start();
+        
+        // recognition.onend = () => {
+        //     item.dataset.recording = "0";
+        //     btn.textContent = "🎤 Record";
+        //     btn.classList.remove("recording");
+        //     console.log("transcript = ", transcript);
+        //     textarea.value = transcript.trim();
+        //     if(transcript.trim()){
+        //         textarea.classList.add("is-visible"); // Hiển thị bằng class
+        //     }
+        // };
+
+        // // Delay 200ms để mobile xử lý ổn định hơn
+        // setTimeout(() => {
+        //     recognition.start();
+        //     item.dataset.recording = "1";
+        //     btn.textContent = "⏹ Stop";
+        //     btn.classList.add("recording");
+        // }, 200);
 
     } catch (err) {
         console.error("Lỗi cấp quyền microphone:", err);
