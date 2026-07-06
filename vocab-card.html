@@ -1495,10 +1495,10 @@ async function toggleRecord(btn){
         //     stream.getTracks().forEach(t => t.stop());
         // };
 
-        // recognition.onerror = (e) => {
-        //     console.error("Speech Recognition Error:", e.error);
-        //     alert("Lỗi nhận diện giọng nói: " + e.error);
-        // };
+        recognition.onerror = (e) => {
+            console.error("Speech Recognition Error:", e.error);
+            alert("Lỗi nhận diện giọng nói: " + e.error);
+        };
         
         // 4. Khởi chạy
         // recorder.start();
