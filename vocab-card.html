@@ -1435,7 +1435,9 @@ async function toggleRecord(btn){
         }
         // 1. Xin quyền Microphone trước (chỉ 1 lần)
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        
+        console.log("info", navigator.userAgent);
+        console.log("info", window.webkitSpeechRecognition);
+        console.log("info", window.SpeechRecognition);
         // 2. Setup SpeechRecognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         // const recognition = new SpeechRecognition();
