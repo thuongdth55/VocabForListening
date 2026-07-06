@@ -1435,23 +1435,25 @@ async function toggleRecord(btn){
         }
         // 1. Xin quyền Microphone trước (chỉ 1 lần)
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log("info", navigator.userAgent);
-        console.log("info", window.webkitSpeechRecognition);
-        console.log("info", window.SpeechRecognition);
+        // console.log("info", navigator.userAgent);
+        // console.log("info", window.webkitSpeechRecognition);
+        // console.log("info", window.SpeechRecognition);
         // 2. Setup SpeechRecognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         // const recognition = new SpeechRecognition();
+        console.log("1");
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
         recognition.interimResults = true;
         recognition.continuous = true;
         recognitionMap.set(item, recognition);
-        
+        console.log("2");
         finalTranscript = ""; 
         textarea.value = "";
         textarea.classList.remove("is-visible");
 
         recognition.onstart = () => {
+            console.log("onstart")
             item.dataset.recording = "1";
             btn.textContent = "⏹ Stop";
             btn.classList.add("recording");
@@ -1461,6 +1463,7 @@ async function toggleRecord(btn){
             textarea.value = "Đang lắng nghe...";
             // textarea.style.border = "2px solid red"; // Thêm đường viền đỏ để nhận diện dễ hơn
         };
+        
 
         recognition.onresult = e => {
             console.log("Sự kiện onresult đã chạy!");
@@ -1501,10 +1504,11 @@ async function toggleRecord(btn){
             console.error("Speech Recognition Error:", e.error);
             alert("Lỗi nhận diện giọng nói: " + e.error);
         };
-        
+        console.log("3");
         // 4. Khởi chạy
         // recorder.start();
-        recognition.start();
+        recognition.start();end
+        console.log("3 end");
 
     } catch (err) {
         console.error("Lỗi:", err);
