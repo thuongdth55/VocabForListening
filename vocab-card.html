@@ -1502,6 +1502,7 @@ async function toggleRecord(btn){
     };
 
     recognition.onend = ()=>{
+        console.log("onend");
 
         item.dataset.recording="0";
 
@@ -1515,7 +1516,8 @@ async function toggleRecord(btn){
         if(transcript.trim()){
             textarea.style.display="block";
         }
-
+        console.log("transcript =", transcriptMap.get(item));
+        console.log("textarea =", textarea);
     };
 
     recognition.start();
