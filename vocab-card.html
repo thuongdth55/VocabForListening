@@ -1501,10 +1501,18 @@ async function toggleRecord(btn){
             btn.classList.remove("recording");
         
             // Đảm bảo textarea hiện kết quả cuối cùng
+            textarea.classList.add("is-visible");
             textarea.value = finalTranscript.trim();
             console.log("Transcript cuối cùng:", finalTranscript);
         };
 
+        recognition.onstart = () => {
+            item.dataset.recording = "1";
+            btn.textContent = "⏹ Stop";
+            btn.classList.add("recording");
+            console.log("Speech recognition đã bắt đầu.");
+        };
+        
         recognition.start();
         
         // recognition.onend = () => {
