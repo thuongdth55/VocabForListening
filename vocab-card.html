@@ -1437,7 +1437,7 @@ async function toggleRecord(btn){
         const recognition = new SpeechRecognition();
         recognition.lang = "en-US";
         recognition.interimResults = true;
-        recognition.continuous = true;
+        recognition.continuous = false;
         recognitionMap.set(item, recognition);
         
         finalTranscript = ""; 
@@ -1452,14 +1452,16 @@ async function toggleRecord(btn){
             // Ép hiển thị bằng mọi giá
             textarea.classList.add("is-visible");
             textarea.value = "Đang lắng nghe...";
-            textarea.style.border = "2px solid red"; // Thêm đường viền đỏ để nhận diện dễ hơn
-    
-            console.log("Đã kích hoạt onstart, textarea.classList:", textarea.classList);
+            // textarea.style.border = "2px solid red"; // Thêm đường viền đỏ để nhận diện dễ hơn
         };
 
         recognition.onresult = e => {
+            console.log("Sự kiện onresult đã chạy!");
+            console.log("Dữ liệu e.results:", e.results);
+            
             let interimTranscript = "";
             for(let i = e.resultIndex; i < e.results.length; i++){
+                console.log("Đang duyệt kết quả thứ:", i, e.results[i][0].transcript);
                 if(e.results[i].isFinal){
                     finalTranscript += e.results[i][0].transcript + " ";
                 } else {
