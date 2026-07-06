@@ -1481,7 +1481,7 @@ async function toggleRecord(btn){
             btn.classList.remove("recording");
             textarea.value = finalTranscript.trim();
         };
-
+        
         // 3. Setup MediaRecorder
         // const recorder = new MediaRecorder(stream);
         // recorderMap.set(item, recorder);
@@ -1492,10 +1492,10 @@ async function toggleRecord(btn){
         //     stream.getTracks().forEach(t => t.stop());
         // };
 
-        recognition.onerror = (e) => {
-            console.error("Speech Recognition Error:", e.error);
-            alert("Lỗi nhận diện giọng nói: " + e.error);
-        };
+        // recognition.onerror = (e) => {
+        //     console.error("Speech Recognition Error:", e.error);
+        //     alert("Lỗi nhận diện giọng nói: " + e.error);
+        // };
         
         // 4. Khởi chạy
         // recorder.start();
