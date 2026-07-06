@@ -1448,6 +1448,13 @@ async function toggleRecord(btn){
             item.dataset.recording = "1";
             btn.textContent = "⏹ Stop";
             btn.classList.add("recording");
+
+            // Ép hiển thị bằng mọi giá
+            textarea.classList.add("is-visible");
+            textarea.value = "Đang lắng nghe...";
+            textarea.style.border = "2px solid red"; // Thêm đường viền đỏ để nhận diện dễ hơn
+    
+            console.log("Đã kích hoạt onstart, textarea.classList:", textarea.classList);
         };
 
         recognition.onresult = e => {
@@ -1480,6 +1487,11 @@ async function toggleRecord(btn){
             stream.getTracks().forEach(t => t.stop());
         };
 
+        recognition.onerror = (e) => {
+            console.error("Speech Recognition Error:", e.error);
+            alert("Lỗi nhận diện giọng nói: " + e.error);
+        };
+        
         // 4. Khởi chạy
         recorder.start();
         recognition.start();
