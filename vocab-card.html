@@ -1412,6 +1412,7 @@ const recorderMap = new WeakMap();
 const audioBlobMap = new WeakMap();
 // const transcriptMap = new WeakMap();
 let finalTranscript = "";
+let recognition = null;
     
 async function toggleRecord(btn){
     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
@@ -1433,8 +1434,9 @@ async function toggleRecord(btn){
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         
         // 2. Setup SpeechRecognition
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+        // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        // const recognition = new SpeechRecognition();
+        recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = "en-US";
         recognition.interimResults = true;
         recognition.continuous = false;
@@ -1473,6 +1475,7 @@ async function toggleRecord(btn){
         };
 
         recognition.onend = () => {
+            console.log("sự kiện onend");
             item.dataset.recording = "0";
             btn.textContent = "🎤 Record";
             btn.classList.remove("recording");
