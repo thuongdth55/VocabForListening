@@ -838,6 +838,9 @@ body{
 
 }
 
+.speech-result.is-visible {
+    display: block !important;
+}
 .speech-result:focus{
 
     border-color:var(--gold);
@@ -1232,7 +1235,8 @@ body{
 
         if (actions.style.display === "flex") {
             actions.style.display = "none";
-            textarea.style.display = "none";
+            // textarea.style.display = "none";
+            textarea.classList.remove("is-visible");
         } else {
             actions.style.display = "flex";
         }
@@ -1407,114 +1411,101 @@ const recognitionMap = new WeakMap();
 const recorderMap = new WeakMap();
 const audioBlobMap = new WeakMap();
 // const transcriptMap = new WeakMap();
-    
+
 async function toggleRecord(btn){
-
-    const item =
-        btn.closest(".ext-vocab-item") ||
-        btn.closest(".header-section");
-
+    const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
     const textarea = item.querySelector(".speech-result");
 
-    // Đang ghi -> dừng
     if(item.dataset.recording === "1"){
-
         recognitionMap.get(item)?.stop();
         recorderMap.get(item)?.stop();
-
         return;
     }
 
-    // Xin quyền microphone
-    const stream = await navigator.mediaDevices.getUserMedia({
-        audio:true
-    });
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        // ==========================
+        // MediaRecorder
+        // ==========================
 
-    // ==========================
-    // MediaRecorder
-    // ==========================
+        const recorder = new MediaRecorder(stream);
 
-    const recorder = new MediaRecorder(stream);
+        recorderMap.set(item, recorder);
 
-    recorderMap.set(item, recorder);
+        let chunks = [];
 
-    let chunks = [];
+        recorder.ondataavailable = e=>{
+            if(e.data.size){
+                chunks.push(e.data);
+            }
+        };
 
-    recorder.ondataavailable = e=>{
-        if(e.data.size){
-            chunks.push(e.data);
-        }
-    };
-
-    recorder.onstop = ()=>{
-
-        const blob = new Blob(chunks,{
-            type:"audio/webm"
-        });
-
-        audioBlobMap.set(item, blob);
-
-        stream.getTracks().forEach(t=>t.stop());
-    };
-
-    recorder.start();
-
-    // ==========================
-    // SpeechRecognition
-    // ==========================
-
-    const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-    const recognition = new SpeechRecognition();
-
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = true;
-
-    recognitionMap.set(item, recognition);
-
-    let transcript = "";
-
-    textarea.style.display = "none";
-    textarea.value = "";
+        recorder.onstop = ()=>{
     
-    recognition.onresult = e => {
+            const blob = new Blob(chunks,{
+                type:"audio/webm"
+            });
 
-        transcript = "";
+            audioBlobMap.set(item, blob);
 
-        for(let i=0;i<e.results.length;i++){
-            transcript += e.results[i][0].transcript + " ";
+            stream.getTracks().forEach(t=>t.stop());
+        };
+
+        recorder.start();
+
+        // ==========================
+        // SpeechRecognition
+        // ==========================
+        
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Trình duyệt của bạn không hỗ trợ Speech Recognition");
+            return;
         }
 
-        // transcriptMap.set(item, transcript.trim());
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = true;
+        recognition.continuous = true;
 
-    };
+        recognitionMap.set(item, recognition);
+        
+        // Dùng class thay vì display:none
+        textarea.classList.remove("is-visible");
+        textarea.value = "";
+        
+        let transcript = "";
 
-    recognition.onend = ()=>{
-        item.dataset.recording="0";
+        recognition.onresult = e => {
+            transcript = "";
+            for(let i=0; i < e.results.length; i++){
+                transcript += e.results[i][0].transcript + " ";
+            }
+        };
 
-        btn.textContent="🎤 Record";
-        btn.classList.remove("recording");
+        recognition.onend = () => {
+            item.dataset.recording = "0";
+            btn.textContent = "🎤 Record";
+            btn.classList.remove("recording");
+            
+            textarea.value = transcript.trim();
+            if(transcript.trim()){
+                textarea.classList.add("is-visible"); // Hiển thị bằng class
+            }
+        };
 
-        // const transcript = transcriptMap.get(item) || "";
+        // Delay 200ms để mobile xử lý ổn định hơn
+        setTimeout(() => {
+            recognition.start();
+            item.dataset.recording = "1";
+            btn.textContent = "⏹ Stop";
+            btn.classList.add("recording");
+        }, 200);
 
-        textarea.value = transcript;
-
-        if(transcript.trim()){
-            textarea.style.display="block";
-        }
-        console.log("transcript =", transcript);
-        console.log("textarea =", textarea);
-    };
-
-    recognition.start();
-
-    item.dataset.recording="1";
-
-    btn.textContent="⏹ Stop";
-    btn.classList.add("recording");
+    } catch (err) {
+        console.error("Lỗi cấp quyền microphone:", err);
+        alert("Cần cho phép quyền sử dụng Microphone.");
+    }
 }
 
 function playRecorded(btn){
