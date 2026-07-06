@@ -1429,57 +1429,26 @@ async function toggleRecord(btn){
     }
 
     try {
+        // 1. Xin quyền Microphone trước (chỉ 1 lần)
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        // ==========================
-        // MediaRecorder
-        // ==========================
-
-        const recorder = new MediaRecorder(stream);
-
-        recorderMap.set(item, recorder);
-
-        let chunks = [];
-
-        recorder.ondataavailable = e=>{
-            if(e.data.size){
-                chunks.push(e.data);
-            }
-        };
-
-        recorder.onstop = ()=>{
-    
-            const blob = new Blob(chunks,{
-                type:"audio/webm"
-            });
-
-            audioBlobMap.set(item, blob);
-
-            stream.getTracks().forEach(t=>t.stop());
-        };
-
-        recorder.start();
-
-        // ==========================
-        // SpeechRecognition
-        // ==========================
         
+        // 2. Setup SpeechRecognition
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Trình duyệt của bạn không hỗ trợ Speech Recognition");
-            return;
-        }
-
         const recognition = new SpeechRecognition();
         recognition.lang = "en-US";
         recognition.interimResults = true;
         recognition.continuous = true;
-
         recognitionMap.set(item, recognition);
         
-        // Dùng class thay vì display:none
-        textarea.classList.remove("is-visible");
-        textarea.value = "";
         finalTranscript = ""; 
+        textarea.value = "";
+        textarea.classList.remove("is-visible");
+
+        recognition.onstart = () => {
+            item.dataset.recording = "1";
+            btn.textContent = "⏹ Stop";
+            btn.classList.add("recording");
+        };
 
         recognition.onresult = e => {
             let interimTranscript = "";
@@ -1490,7 +1459,6 @@ async function toggleRecord(btn){
                     interimTranscript += e.results[i][0].transcript;
                 }
             }
-            // Hiển thị ngay lập tức trong quá trình nói để bạn biết nó đang nhận diện
             textarea.value = finalTranscript + interimTranscript;
             textarea.classList.add("is-visible");
         };
@@ -1499,44 +1467,26 @@ async function toggleRecord(btn){
             item.dataset.recording = "0";
             btn.textContent = "🎤 Record";
             btn.classList.remove("recording");
-        
-            // Đảm bảo textarea hiện kết quả cuối cùng
-            textarea.classList.add("is-visible");
             textarea.value = finalTranscript.trim();
-            console.log("Transcript cuối cùng:", finalTranscript);
         };
 
-        recognition.onstart = () => {
-            item.dataset.recording = "1";
-            btn.textContent = "⏹ Stop";
-            btn.classList.add("recording");
-            console.log("Speech recognition đã bắt đầu.");
+        // 3. Setup MediaRecorder
+        const recorder = new MediaRecorder(stream);
+        recorderMap.set(item, recorder);
+        let chunks = [];
+        recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+        recorder.onstop = () => {
+            audioBlobMap.set(item, new Blob(chunks, { type: "audio/webm" }));
+            stream.getTracks().forEach(t => t.stop());
         };
-        
+
+        // 4. Khởi chạy
+        recorder.start();
         recognition.start();
-        
-        // recognition.onend = () => {
-        //     item.dataset.recording = "0";
-        //     btn.textContent = "🎤 Record";
-        //     btn.classList.remove("recording");
-        //     console.log("transcript = ", transcript);
-        //     textarea.value = transcript.trim();
-        //     if(transcript.trim()){
-        //         textarea.classList.add("is-visible"); // Hiển thị bằng class
-        //     }
-        // };
-
-        // // Delay 200ms để mobile xử lý ổn định hơn
-        // setTimeout(() => {
-        //     recognition.start();
-        //     item.dataset.recording = "1";
-        //     btn.textContent = "⏹ Stop";
-        //     btn.classList.add("recording");
-        // }, 200);
 
     } catch (err) {
-        console.error("Lỗi cấp quyền microphone:", err);
-        alert("Cần cho phép quyền sử dụng Microphone.");
+        console.error("Lỗi:", err);
+        alert("Lỗi: " + err.message);
     }
 }
 
