@@ -1464,39 +1464,45 @@ function playRecorded(btn) {
         return;
     }
 
-    // Reset giao diện
-    textarea.value = "Đang nhận diện từ file ghi âm...";
-    textarea.classList.add("is-visible");
+    textarea.value = "Đang khởi tạo nhận diện...";
 
-    // Khởi tạo Recognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = false; // Nhận diện kết quả cuối cùng
+    // 1. Thêm độ trễ để trình duyệt giải phóng phần cứng hoàn toàn
+    setTimeout(() => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
 
-    recognition.onresult = (e) => {
-        const transcript = e.results[0][0].transcript;
-        textarea.value = transcript;
-    };
+        recognition.onstart = () => {
+            console.log("Recognition started successfully");
+        };
 
-    recognition.onerror = (e) => {
-        console.error("Lỗi nhận diện:", e.error);
-        textarea.value = "Lỗi nhận diện: " + e.error;
-    };
+        recognition.onresult = (e) => {
+            textarea.value = e.results[0][0].transcript;
+        };
 
-    // Phát âm thanh
-    const audio = new Audio(URL.createObjectURL(blob));
-    
-    // Bắt đầu nhận diện ngay khi audio bắt đầu phát
-    audio.onplay = () => {
+        recognition.onerror = (e) => {
+            console.error("Lỗi:", e.error);
+            textarea.value = "Lỗi: " + e.error;
+        };
+
+        // Phát audio
+        const audio = new Audio(URL.createObjectURL(blob));
+        
+        // Phát xong thì mới dừng nhận diện
+        audio.onended = () => {
+            recognition.stop();
+        };
+
+        // Bắt đầu nhận diện trước, sau đó mới phát audio
+        // Cần delay nhỏ để SpeechRecognition kịp "nắm lấy" cổng micro sau khi đã giải phóng
         try {
             recognition.start();
+            audio.play();
         } catch (err) {
-            console.error("Không thể khởi động recognition:", err);
+            console.error("Start error:", err);
         }
-    };
-
-    audio.play();
+    }, 300); // Đợi 300ms để trình duyệt chuyển đổi trạng thái Micro
 }
 // async function toggleRecord(btn) {
 //     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
