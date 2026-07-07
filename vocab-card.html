@@ -1413,191 +1413,174 @@ const audioBlobMap = new WeakMap();
 // const transcriptMap = new WeakMap();
 let finalTranscript = "";
 // let recognition = null;
+
 async function toggleRecord(btn) {
     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
-    const textarea = item.querySelector(".speech-result");
     
-    // Kiểm tra trạng thái đang ghi
+    // Nếu đang ghi thì dừng lại
     if (item.dataset.recording === "1") {
-        const rec = recognitionMap.get(item);
-        if (rec) rec.stop();
+        const recorder = recorderMap.get(item);
+        recorder.stop();
+        // Dừng tất cả các track để giải phóng micro ngay lập tức
+        const stream = audioStreamMap.get(item);
+        stream.getTracks().forEach(track => track.stop());
+        
+        item.dataset.recording = "0";
+        btn.textContent = "🎤 Record";
         return;
     }
 
-    // Khởi tạo SpeechRecognition
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        alert("Trình duyệt không hỗ trợ nhận diện giọng nói.");
-        return;
-    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioStreamMap.set(item, stream);
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = true;
-    
-    recognitionMap.set(item, recognition);
-    finalTranscript = ""; 
-    textarea.value = "";
-    textarea.classList.add("is-visible");
-    textarea.value = "Đang lắng nghe...";
+        const recorder = new MediaRecorder(stream);
+        let chunks = [];
+        
+        recorder.ondataavailable = e => chunks.push(e.data);
+        recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: "audio/webm" });
+            audioBlobMap.set(item, blob);
+        };
 
-    recognition.onstart = () => {
+        recorderMap.set(item, recorder);
+        recorder.start();
+        
         item.dataset.recording = "1";
         btn.textContent = "⏹ Stop";
-        btn.classList.add("recording");
-    };
-
-    recognition.onresult = e => {
-        let interimTranscript = "";
-        for(let i = e.resultIndex; i < e.results.length; i++){
-            if(e.results[i].isFinal){
-                finalTranscript += e.results[i][0].transcript + " ";
-            } else {
-                interimTranscript += e.results[i][0].transcript;
-            }
-        }
-        textarea.value = finalTranscript + interimTranscript;
-    };
-
-    recognition.onend = () => {
-        item.dataset.recording = "0";
-        btn.textContent = "🎤 Record";
-        btn.classList.remove("recording");
-        textarea.value = finalTranscript.trim();
-    };
-
-    recognition.onerror = (e) => {
-        console.error("Speech Recognition Error:", e.error);
-        // Nếu lỗi là 'not-allowed', người dùng chưa cấp quyền
-        alert("Lỗi: " + e.error);
-        item.dataset.recording = "0";
-        btn.textContent = "🎤 Record";
-    };
-
-    // Bắt đầu ngay, không cần getUserMedia
-    recognition.start();
+    } catch (err) {
+        console.error("Lỗi:", err);
+        alert("Không thể truy cập Micro: " + err.message);
+    }
 }
-    
-// async function toggleRecord(btn){
-//     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
-//     const textarea = item.querySelector(".speech-result");
-    
-//     console.log("Textarea tìm thấy:", textarea); 
-//     if (!textarea) {
-//         alert("Lỗi: Không tìm thấy khung textarea!");
-//         return;
-//     }
-//     if(item.dataset.recording === "1"){
-//         recognitionMap.get(item)?.stop();
-//         // recorderMap.get(item)?.stop();
-//         return;
-//     }
 
-//     try {
-//         if (recognition){
-//             recognition.stop();
-//         }
-//         // 1. Xin quyền Microphone trước (chỉ 1 lần)
-//         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-//         // console.log("info", navigator.userAgent);
-//         // console.log("info", window.webkitSpeechRecognition);
-//         // console.log("info", window.SpeechRecognition);
-//         // 2. Setup SpeechRecognition
-//         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-//         // const recognition = new SpeechRecognition();
-//         console.log("1");
-//         recognition = new SpeechRecognition();
-//         recognition.lang = "en-US";
-//         recognition.interimResults = true;
-//         recognition.continuous = true;
-//         recognitionMap.set(item, recognition);
-//         console.log("2");
-//         finalTranscript = ""; 
-//         textarea.value = "";
-//         textarea.classList.remove("is-visible");
-
-//         recognition.onstart = () => {
-//             console.log("onstart")
-//             item.dataset.recording = "1";
-//             btn.textContent = "⏹ Stop";
-//             btn.classList.add("recording");
-
-//             // Ép hiển thị bằng mọi giá
-//             textarea.classList.add("is-visible");
-//             textarea.value = "Đang lắng nghe...";
-//             // textarea.style.border = "2px solid red"; // Thêm đường viền đỏ để nhận diện dễ hơn
-//         };
-        
-
-//         recognition.onresult = e => {
-//             console.log("Sự kiện onresult đã chạy!");
-//             console.log("Dữ liệu e.results:", e.results);
-            
-//             let interimTranscript = "";
-//             for(let i = e.resultIndex; i < e.results.length; i++){
-//                 console.log("Đang duyệt kết quả thứ:", i, e.results[i][0].transcript);
-//                 if(e.results[i].isFinal){
-//                     finalTranscript += e.results[i][0].transcript + " ";
-//                 } else {
-//                     interimTranscript += e.results[i][0].transcript;
-//                 }
-//             }
-//             textarea.value = finalTranscript + interimTranscript;
-//             textarea.classList.add("is-visible");
-//         };
-
-//         recognition.onend = () => {
-//             console.log("sự kiện onend");
-//             item.dataset.recording = "0";
-//             btn.textContent = "🎤 Record";
-//             btn.classList.remove("recording");
-//             textarea.value = finalTranscript.trim();
-//         };
-        
-//         // 3. Setup MediaRecorder
-//         // const recorder = new MediaRecorder(stream);
-//         // recorderMap.set(item, recorder);
-//         // let chunks = [];
-//         // recorder.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
-//         // recorder.onstop = () => {
-//         //     audioBlobMap.set(item, new Blob(chunks, { type: "audio/webm" }));
-//         //     stream.getTracks().forEach(t => t.stop());
-//         // };
-
-//         recognition.onerror = (e) => {
-//             console.error("Speech Recognition Error:", e.error);
-//             alert("Lỗi nhận diện giọng nói: " + e.error);
-//         };
-//         console.log("3");
-//         // 4. Khởi chạy
-//         // recorder.start();
-//         recognition.start();
-//         console.log("3 end");
-
-//     } catch (err) {
-//         console.error("Lỗi:", err);
-//         alert("Lỗi: " + err.message);
-//     }
-// }
-
-function playRecorded(btn){
-
-    const item =
-        btn.closest(".ext-vocab-item") ||
-        btn.closest(".header-section");
-
+function playRecorded(btn) {
+    const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
+    const textarea = item.querySelector(".speech-result");
     const blob = audioBlobMap.get(item);
 
-    if(!blob){
+    if (!blob) {
         alert("Chưa có bản ghi.");
         return;
     }
 
+    // Reset giao diện
+    textarea.value = "Đang nhận diện từ file ghi âm...";
+    textarea.classList.add("is-visible");
+
+    // Khởi tạo Recognition
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false; // Nhận diện kết quả cuối cùng
+
+    recognition.onresult = (e) => {
+        const transcript = e.results[0][0].transcript;
+        textarea.value = transcript;
+    };
+
+    recognition.onerror = (e) => {
+        console.error("Lỗi nhận diện:", e.error);
+        textarea.value = "Lỗi nhận diện: " + e.error;
+    };
+
+    // Phát âm thanh
     const audio = new Audio(URL.createObjectURL(blob));
+    
+    // Bắt đầu nhận diện ngay khi audio bắt đầu phát
+    audio.onplay = () => {
+        try {
+            recognition.start();
+        } catch (err) {
+            console.error("Không thể khởi động recognition:", err);
+        }
+    };
 
     audio.play();
 }
+// async function toggleRecord(btn) {
+//     const item = btn.closest(".ext-vocab-item") || btn.closest(".header-section");
+//     const textarea = item.querySelector(".speech-result");
+    
+//     // Kiểm tra trạng thái đang ghi
+//     if (item.dataset.recording === "1") {
+//         const rec = recognitionMap.get(item);
+//         if (rec) rec.stop();
+//         return;
+//     }
+
+//     // Khởi tạo SpeechRecognition
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     if (!SpeechRecognition) {
+//         alert("Trình duyệt không hỗ trợ nhận diện giọng nói.");
+//         return;
+//     }
+
+//     const recognition = new SpeechRecognition();
+//     recognition.lang = "en-US";
+//     recognition.interimResults = true;
+//     recognition.continuous = true;
+    
+//     recognitionMap.set(item, recognition);
+//     finalTranscript = ""; 
+//     textarea.value = "";
+//     textarea.classList.add("is-visible");
+//     textarea.value = "Đang lắng nghe...";
+
+//     recognition.onstart = () => {
+//         item.dataset.recording = "1";
+//         btn.textContent = "⏹ Stop";
+//         btn.classList.add("recording");
+//     };
+
+//     recognition.onresult = e => {
+//         let interimTranscript = "";
+//         for(let i = e.resultIndex; i < e.results.length; i++){
+//             if(e.results[i].isFinal){
+//                 finalTranscript += e.results[i][0].transcript + " ";
+//             } else {
+//                 interimTranscript += e.results[i][0].transcript;
+//             }
+//         }
+//         textarea.value = finalTranscript + interimTranscript;
+//     };
+
+//     recognition.onend = () => {
+//         item.dataset.recording = "0";
+//         btn.textContent = "🎤 Record";
+//         btn.classList.remove("recording");
+//         textarea.value = finalTranscript.trim();
+//     };
+
+//     recognition.onerror = (e) => {
+//         console.error("Speech Recognition Error:", e.error);
+//         // Nếu lỗi là 'not-allowed', người dùng chưa cấp quyền
+//         alert("Lỗi: " + e.error);
+//         item.dataset.recording = "0";
+//         btn.textContent = "🎤 Record";
+//     };
+
+//     // Bắt đầu ngay, không cần getUserMedia
+//     recognition.start();
+// }
+
+// function playRecorded(btn){
+
+//     const item =
+//         btn.closest(".ext-vocab-item") ||
+//         btn.closest(".header-section");
+
+//     const blob = audioBlobMap.get(item);
+
+//     if(!blob){
+//         alert("Chưa có bản ghi.");
+//         return;
+//     }
+
+//     const audio = new Audio(URL.createObjectURL(blob));
+
+//     audio.play();
+// }
     
     function openImageViewer(images, index){
         viewerImages = images;
